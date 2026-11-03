@@ -1,6 +1,6 @@
 # Development history
 
-This public summary records implementation milestones through version 0.28.
+This public summary records implementation milestones through version 0.29.
 Historical behavior and test counts apply to their named versions; current usage
 is in the [user guide](USER_GUIDE.md), and verification limits are in
 [test results](../tests/RESULTS.md).
@@ -206,3 +206,13 @@ clear of controls. Arcade retains its palette IDs with more saturated colours,
 new animated pixel tributes, coins and prize claws, a visible header parade and
 raised rectangular or round cabinet-style buttons. Reduced motion freezes all
 automatic Arcade decoration. The four carousel layouts keep their plain styling.
+
+## 0.29 — Consistent interface localization
+
+Expanded the localization audit to C++ diagnostics and dynamic labels. Steam
+initialization/download failures, Caelestia and controller errors now use localized
+summaries with original details in a local log. Fixed Workshop taxonomy labels,
+appearance controls and native file filters follow the interface language.
+Stored notices and existing worker errors relocalize after a language change.
+The catalog contains 429 entries across 22 languages; metadata and named artwork
+remain original. Hidden native captures exercise Steam failures in every locale.

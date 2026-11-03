@@ -302,3 +302,18 @@ layouts use the same plain style; there is no switcher Theme control or themed
 artwork. The eye button previews the real popup's colors and layout. Changing
 the UI theme or palette leaves the switcher color unchanged. Default's own UI
 palette dropdown includes the same 20 choices. Other UI themes remain available.
+
+## Interface language and diagnostics
+
+The interface supports 22 languages. Labels, fixed Workshop filter tags, stored
+notifications and application error summaries follow the selected language.
+Changing language also updates an already-visible Steam error without retrying
+the operation. Workshop query identifiers remain unchanged internally.
+
+Native Steam, operating-system and renderer diagnostics may contain arbitrary
+text. The interface shows a localized summary and the location of
+`$XDG_STATE_HOME/wallpaper-lab/diagnostics.log` (normally under `~/.local/state`).
+The log retains the original technical message for troubleshooting. Project
+titles, author names, descriptions, unknown creator tags, font family names and
+named theme/palette artwork remain original content. CLI help and developer logs
+are technical output rather than translated interface content.

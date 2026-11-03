@@ -26,7 +26,7 @@ static void AnimationCustomization(void){
  if(animationCustomize==1){
  const char* palettes[LAB_THEME_COUNT];int ids[LAB_THEME_COUNT],count=0,selected=0;
  for(int i=0;i<LAB_THEME_COUNT;i++)if(labThemes[i].collection==0){ids[count]=i;palettes[count]=labThemes[i].name;if(i==lab_option("switcher_palette"))selected=count;count++;}
- int value=Choice(79,x,&y,w,"Color palette",palettes,count,selected);if(value!=selected)lab_set_option("switcher_palette",ids[value]);
+ int value=Choice(79,x,&y,w,lab_tr("Palette di colori"),palettes,count,selected);if(value!=selected)lab_set_option("switcher_palette",ids[value]);
  SettingSlider(100,x,&y,w,lab_tr("Dimensione del carousel"),"switcher_size",70,140,"%");SettingSlider(101,x,&y,w,lab_tr("Ingrandimento della selezione"),"switcher_zoom",105,150,"%");SettingSlider(102,x,&y,w,lab_tr("Dissolvenza in entrata"),"switcher_fade_in",60,600," ms");SettingSlider(103,x,&y,w,lab_tr("Dissolvenza in uscita"),"switcher_fade_out",60,600," ms");SettingSlider(104,x,&y,w,lab_tr("Durata del movimento"),"switcher_motion",100,900," ms");
  if(lab_option("carousel_layout")!=0){int at=lab_option("switcher_reverse"),v=BoolChoice(75,x,&y,w,lab_tr("Inverti scorrimento"),at);if(v!=at)lab_set_option("switcher_reverse",v);}
  if(lab_option("carousel_layout")==3){SettingSlider(105,x,&y,w,lab_tr("Velocità dell’onda"),"wave_speed",0,300,"%");SettingSlider(106,x,&y,w,lab_tr("Ampiezza dell’onda"),"wave_height",0,40," px");}

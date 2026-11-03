@@ -299,6 +299,22 @@ json describeDisplays(){
     auto error=canvasError(displayDraft);
     return {{"basis",displayDraft.basis},{"saved",settings.contains("display_layout")},{"outputs",outputs},{"error",error},{"renderer",error.empty()?renderLayout(displayDraft,displayData):json()}};
 }
+std::string localizedDiagnostic(const std::string& raw){
+ if(raw.empty())return {};auto text=diagnosticText(raw);
+ if(text==translate(raw.c_str()))return text;
+ static std::mutex logMutex;static std::set<std::string> logged;
+ auto log=stateDir()/"diagnostics.log";bool available=false;
+ try{std::lock_guard lock(logMutex);fs::create_directories(log.parent_path());
+  if(logged.size()<1024&&!logged.contains(raw)){std::ofstream file(log,std::ios::app);file<<json{{"message",raw}}.dump()<<'\n';if(file)logged.insert(raw);}
+  available=fs::is_regular_file(log);
+ }catch(...){}
+ if(available){std::string label=translate("Dettagli: %s");label.replace(label.find("%s"),2,log.string());text+="\n"+label;}
+ if(auto trace=getenv("WALLPAPER_LAB_I18N_TRACE"))try{
+  static std::string previous;auto identity=std::to_string(currentLanguage())+raw;
+  if(previous!=identity){writeJson(trace,{{"language",languageCode(currentLanguage())},{"source",raw},{"text",text}});previous=identity;}
+ }catch(...){}
+ return text;
+}
 template<class F> int guarded(F operation) {
     try {operation();errorMessage.clear();return 1;}catch(const std::exception& e){errorMessage=e.what();return 0;}
 }
@@ -322,15 +338,15 @@ int lab_font_revision(){return fontRevision;}
 int lab_set_font(int i){return guarded([&]{auto family=fontFamilies.at(i);if(!savePreference("font_family",i==0?"":family))throw std::runtime_error(errorMessage);resolveFonts();});}
 const char* lab_path(int i){return items.at(i).path.c_str();}
 int lab_files_busy(){return fileJob.valid();}
-const char* lab_files_notice(){return lab_tr(fileNotice.c_str());}
+const char* lab_files_notice(){return fileNotice.c_str();}
 const char* lab_library_path(int local){static std::string value;if(local)value=localLibrary(settings).string();else{value=settings.value("workshop_path",std::string());if(value.empty())for(auto p:steamLibraries())if(fs::is_directory(p/"steamapps/workshop/content/431960")){value=(p/"steamapps/workshop/content/431960").string();break;}}return value.c_str();}
-int lab_files_start(int action){if(fileJob.valid()||pending.valid()||catalogScan.valid())return 0;fileNotice.clear();std::string title=lab_tr(action==3?"Sfondo dell’app":action==0?"Importa immagini o video":action==1?"Workshop Steam":"Sfondi locali");auto prefs=loadSettings();fileJob=std::async(std::launch::async,[action,title,prefs]{auto files=chooseLocalFiles(action==1||action==2,title,action==3);if(files.empty())return json{{"cancelled",true}};if(action==3){auto image=importAppBackground(files.front());ControllerLock lock;auto latest=loadSettings();latest["app_background"]=image.string();writeJson(configDir()/"settings.json",latest);return json{{"background",true}};}if(action!=0){auto directory=fs::canonical(files.front());if(!fs::is_directory(directory))throw std::runtime_error("Seleziona una cartella valida");ControllerLock lock;auto latest=loadSettings();latest[action==1?"workshop_path":"local_path"]=directory.string();writeJson(configDir()/"settings.json",latest);return json{{"changed",true}};}int count=0;for(auto& file:files){importLocalMedia(file,localLibrary(prefs));count++;}return json{{"imported",count}};});return 1;}
+int lab_files_start(int action){if(fileJob.valid()||pending.valid()||catalogScan.valid())return 0;fileNotice.clear();std::string title=lab_tr(action==3?"Sfondo dell’app":action==0?"Importa immagini o video":action==1?"Steam Workshop":"Sfondi locali");auto prefs=loadSettings();std::vector<std::string> labels={std::string(lab_tr("Immagine"))+" / "+lab_tr("Video"),lab_tr("Tutti"),lab_tr("Immagine")};fileJob=std::async(std::launch::async,[action,title,prefs,labels]{auto files=chooseLocalFiles(action==1||action==2,title,action==3,labels);if(files.empty())return json{{"cancelled",true}};if(action==3){auto image=importAppBackground(files.front());ControllerLock lock;auto latest=loadSettings();latest["app_background"]=image.string();writeJson(configDir()/"settings.json",latest);return json{{"background",true}};}if(action!=0){auto directory=fs::canonical(files.front());if(!fs::is_directory(directory))throw std::runtime_error("Seleziona una cartella valida");ControllerLock lock;auto latest=loadSettings();latest[action==1?"workshop_path":"local_path"]=directory.string();writeJson(configDir()/"settings.json",latest);return json{{"changed",true}};}int count=0;for(auto& file:files){importLocalMedia(file,localLibrary(prefs));count++;}return json{{"imported",count}};});return 1;}
 const char* lab_app_background(){static std::string path;path=settings.value("app_background",std::string());return path.c_str();}
 int lab_clear_app_background(){return lab_set_option("app_background_preset",0);}
 int lab_import_files(const char* const* paths,int count){if(fileJob.valid()||pending.valid()||catalogScan.valid()||count<1||count>1000)return 0;std::vector<fs::path> files;for(int n=0;n<count;n++)files.emplace_back(paths[n]);auto root=localLibrary(settings);fileJob=std::async(std::launch::async,[files,root]{for(auto& file:files)importLocalMedia(file,root);return json{{"imported",files.size()}};});return 1;}
 int lab_files_poll(){if(!fileJob.valid()||fileJob.wait_for(std::chrono::seconds(0))!=std::future_status::ready)return 0;try{auto result=fileJob.get();settings=loadSettings();if(result.value("cancelled",false))return 0;fileNotice="Modifiche applicate e salvate.";return result.value("background",false)?2:1;}catch(const std::exception& e){errorMessage=e.what();return -1;}}
 int lab_caelestia_available(){return fs::is_regular_file(caelestiaHelper());}
-const char* lab_caelestia_status(){static std::string result;try{auto status=readJson(stateDir()/"integration-status.json");result=status.value("ok",false)?lab_tr("Modifiche applicate e salvate."):status.value("error",std::string());}catch(...){result=lab_tr(settings.value("caelestia_enabled",false)?"Attivo":"Disattivo");}return result.c_str();}
+const char* lab_caelestia_status(){static std::string result;try{auto status=readJson(stateDir()/"integration-status.json");result=status.value("ok",false)?lab_tr("Modifiche applicate e salvate."):localizedDiagnostic(status.value("error",std::string()));}catch(...){result=lab_tr(settings.value("caelestia_enabled",false)?"Attivo":"Disattivo");}return result.c_str();}
 void lab_cancel_switcher_preview(){stop(switcherDemoProcess);switcherDemoProcess=json::object();}
 int lab_rescan_start(){return guarded([&]{if(pending.valid()||fileJob.valid()||catalogScan.valid()||stagedCatalogReady)throw std::runtime_error("Attendi la fine del caricamento");auto roots=libraryRoots();catalogScan=std::async(std::launch::async,[roots]{return scan(roots,true);});});}
 int lab_rescan_ready(){
@@ -343,13 +359,13 @@ const char* lab_title(int i){return items.at(i).title.c_str();}
 const char* lab_preview(int i){return items.at(i).preview.c_str();}
 const char* lab_origin(int i){return items.at(i).origin.c_str();}
 const char* lab_type(int i){return items.at(i).type.c_str();}
-const char* lab_error(){return lab_tr(errorMessage.c_str());}
+const char* lab_error(){static std::string text;text=localizedDiagnostic(errorMessage);return text.c_str();}
 int lab_current(){auto p=activePath;for(int i=0;i<lab_count();++i)if(items[i].path==p)return i;return -1;}
 const char* lab_status(){
     auto mode=settings.value("mode",std::string("span"));
     statusMessage=lab_tr(mode=="span"?"Panoramico":mode=="mirror"?"Duplicato":"Singolo");
     if(mode=="single"&&!monitors.empty())statusMessage+=" / "+monitors[std::clamp(settings.value("screen",0),0,(int)monitors.size()-1)];
-    else statusMessage+=" / "+std::to_string(monitors.size())+" monitor";
+    else statusMessage+=" / "+std::string(lab_tr("Monitor"))+": "+std::to_string(monitors.size());
     statusMessage+="    "+std::to_string(settings.value("fps",60))+" FPS    "+lab_tr(settings.value("muted",true)?"Audio disattivato":"Audio attivo");return statusMessage.c_str();
 }
 void lab_cycle_mode(){auto mode=settings.value("mode",std::string("span"));savePreference("mode",mode=="span"?"mirror":mode=="mirror"?"single":"span");}
@@ -487,7 +503,7 @@ int lab_set_position(int i,float x,float y){return guarded([&]{if(!std::isfinite
 int lab_width(int i){return items.at(i).width;}
 int lab_height(int i){return items.at(i).height;}
 int lab_audio(int i){return items.at(i).audio;}
-const char* lab_reason(int i){return lab_tr(items.at(i).reason.c_str());}
+const char* lab_reason(int i){static std::string text;text=localizedDiagnostic(items.at(i).reason);return text.c_str();}
 int lab_favorite(int i){return i>=0&&i<lab_count()&&std::find(carousel.begin(),carousel.end(),json(items[i].path))!=carousel.end();}
 int lab_carousel_count(){return carouselItems(carousel,items).size();}
 int lab_carousel_item(int index){auto order=carouselItems(carousel,items);return index>=0&&index<(int)order.size()?order[index]:-1;}
@@ -507,9 +523,9 @@ int lab_ws_installed(){return workshop::takeInstalled();}
 int lab_ws_author_count(){return workshopView.contains("authors")?workshopView["authors"].size():0;}
 const char* lab_ws_author(int i,int id){static std::string value;try{value=workshopView.at("authors").at(i).at(id?"id":"name");}catch(...){value="";}return value.c_str();}
 int lab_ws_count(){return workshopView.contains("items")?workshopView["items"].size():0;}
-const char* lab_ws_text(int i,const char* key){static std::string value;try{auto& node=i<0?workshopView:workshopView.at("items").at(i);auto v=node.value(key,json());if(v.is_string())value=v.get<std::string>();else if(v.is_array()){value.clear();for(auto& tag:v){if(!value.empty())value+=" · ";value+=tag.get<std::string>();}}else value="";}catch(...){value="";}return value.c_str();}
+const char* lab_ws_text(int i,const char* key){static std::string value;try{auto& node=i<0?workshopView:workshopView.at("items").at(i);auto v=node.value(key,json());if(v.is_string())value=v.get<std::string>();else if(v.is_array()){value.clear();for(auto& tag:v){if(!value.empty())value+=" · ";value+=tag.get<std::string>();}}else value="";}catch(...){value="";}if(std::string(key)=="error")value=localizedDiagnostic(value);return value.c_str();}
 double lab_ws_number(int i,const char* key){try{auto& node=i<0?workshopView:workshopView.at("items").at(i);auto v=node.value(key,json(0));return v.is_boolean()?v.get<bool>():v.is_number()?v.get<double>():0;}catch(...){return 0;}}
-const char* lab_ws_download_text(int i,const char* key){static std::string value;try{value=workshopView.at("downloads").at(workshopView["items"].at(i).at("id").get<std::string>()).value(key,std::string());}catch(...){value="";}return value.c_str();}
+const char* lab_ws_download_text(int i,const char* key){static std::string value;try{value=workshopView.at("downloads").at(workshopView["items"].at(i).at("id").get<std::string>()).value(key,std::string());}catch(...){value="";}if(std::string(key)=="error")value=localizedDiagnostic(value);return value.c_str();}
 double lab_ws_download_progress(int i){try{auto d=workshopView.at("downloads").at(workshopView["items"].at(i).at("id").get<std::string>());return d.value("total",0.)>0?d.value("current",0.)/d.value("total",1.):0;}catch(...){return 0;}}
 void lab_ws_search(const char* text,const char* author,const char* tags,int any,int sort,int page,int groupMask){json list=json::array();std::istringstream input(tags);std::string tag;while(std::getline(input,tag,'|'))if(!tag.empty())list.push_back(tag);json groupTags=json::array();if(!any)for(int g=0;g<5;g++)if(groupMask&(1<<g)){json grouped=json::array();for(auto it=list.begin();it!=list.end();){std::string t=*it;int kind=t.starts_with("Dual")?1:t.starts_with("Ultrawide")?2:t.starts_with("Triple")?3:t.starts_with("Portrait")?4:0;if(t.find(" x ")!=std::string::npos&&kind==g){grouped.push_back(*it);it=list.erase(it);}else ++it;}if(!grouped.empty())groupTags.push_back(grouped);}
 workshop::search({{"tag_groups",groupTags},{"text",text},{"author",author},{"tags",list},{"any",bool(any)},{"sort",sort},{"page",page},{"page_size",settings.value("page_size",100)},{"mature",settings.value("workshop_mature",false)}});}

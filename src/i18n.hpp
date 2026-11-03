@@ -8,4 +8,5 @@ int languageIndex(const std::string& code);
 void setLanguage(int index);
 int currentLanguage();
 const char* translate(const char* key);
+std::string diagnosticText(const std::string& raw);
 }

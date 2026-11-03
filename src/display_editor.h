@@ -72,7 +72,7 @@ static int DisplayEditor(int x,int y,int w){
     TextLines(*error?error:lab_display_dirty()?lab_tr("Modifiche da salvare. Alt disattiva l'aggancio."):lab_display_active()?lab_tr("Disposizione salvata. Trascina per modificare."):lab_tr("Salva per usare le dimensioni reali nel panorama."),x,y,w,13,2,*error?(Color){236,133,140,255}:muted);y+=28;
     displaySaveButton=(Rectangle){x,y,212,36};
     if(Button(displaySaveButton,lab_current()>=0?lab_tr("Salva e applica"):lab_tr("Salva disposizione"),true,!applying&&!*error)){
-        if(lab_display_save()){snprintf(notice,sizeof(notice),lab_tr("Disposizione dei monitor salvata."));if(lab_current()>=0)applying=lab_start(lab_current(),0);}
+        if(lab_display_save()){snprintf(notice,sizeof(notice),"Disposizione dei monitor salvata.");if(lab_current()>=0)applying=lab_start(lab_current(),0);}
     }
     if(Button((Rectangle){x+224,y,116,36},lab_tr("Annulla"),false,!applying&&lab_display_dirty())){lab_display_revert();displayDragging=-1;}
     displayContentHeight=y-start+48;return displayContentHeight;

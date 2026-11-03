@@ -12,6 +12,38 @@ UI interaction are different checks; a pass in one is not certification of all
 Wallpaper Engine projects, drivers or desktops. Performance measurements below
 are observations from the test environment.
 
+## 0.29.0 — Interface localization audit — 2026-11-03
+
+- Release build and all 12 CTest checks passed. The catalog now contains 429
+  entries with all 21 translated columns plus canonical Italian. The source audit
+  covers C/C++ and headers, conditional labels, formatted notices, dynamic tables
+  and 133 explicitly registered diagnostic prefixes. Unregistered diagnostics,
+  untranslated direct UI labels, missing cells and mismatched formats fail checks.
+- All catalog entries and diagnostic routes were exercised in all 22 locales.
+  Tests verify the reported Steam IPC initialization failure, unknown vendor
+  errors, existing errors after a language switch, formatted notification changes
+  and stable string lifetimes. UTF-8 notice arguments remain untouched.
+- Pango/Cairo audited every message in every locale: zero missing glyphs. Native
+  hidden framebuffer captures reproduced the Steam error in all 22 languages
+  using a fake SDK, without Steam access or network requests. An English → German
+  → English switch relocalized the existing error without pressing Retry.
+  English, Arabic and Chinese native captures were visually inspected. Native
+  capture replaced compositor screenshots that could be occluded by other apps.
+- Fixed Workshop taxonomy labels, appearance/font controls and file picker
+  filters are localized. Raw Steam query tags, creator metadata and named artwork
+  remain unchanged. Technical error details are retained in the local diagnostic
+  log; visible summaries and the log-location label follow the chosen language.
+- The lifecycle integration scanned 106 catalog entries, opened native scene and
+  video previews and preserved a foreign process during stop. Localization
+  tests preserved the existing desktop renderer. The local 0.29.0 runtime was
+  installed and restored the saved wallpaper.
+
+Evidence remains under `local/i18n-029/`. These checks establish source coverage,
+format safety, glyph availability and the tested rendered paths. They are not a
+native-speaker certification of every translation or every possible UI layout.
+CLI usage and raw developer/vendor logs are technical output; author content,
+font family names, theme names and protocol identifiers are not translated.
+
 ## 0.28.0 — Power icon and Arcade refresh — 2026-11-03
 
 - Release application build and all 12 CTest checks passed, including catalog,

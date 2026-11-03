@@ -216,3 +216,24 @@ rendering without themed illustrations, card decorations or margin bands.
 maps old themed accents to the nearest Default accent in the same light/dark
 mode; existing Default selections remain unchanged. Font selection and reduced
 motion remain shared preferences. UI themes themselves remain available.
+
+## Localization boundaries
+
+`translations.json` contains canonical Italian keys and 21 translated locale
+columns. The generator validates cells and printf placeholders and embeds
+`ui_messages.json` alongside the catalog. That registry maps owned diagnostic
+prefixes to localized user-facing summaries; dynamic OS/Steam details are logged
+locally instead of being concatenated into translated UI text.
+
+Workers retain their original results. The C application boundary translates
+Workshop failures, download errors, integration status and catalog/controller
+failures at display time. Notifications retain their canonical text or single
+argument template, allowing language changes without freezing the prior locale.
+Fixed Steam taxonomy labels have a separate display mapping; query tags and
+creator metadata are never rewritten.
+
+The source audit covers C, C++ and headers, direct UI labels, conditional keys,
+formatted notices, dynamic label tables and owned diagnostic prefixes. Tests also
+verify all 22 catalog columns, stable string lifetimes, live language changes and
+font coverage. A fake Steamworks component reproduces initialization errors in a
+hidden native UI; framebuffer captures avoid desktop occlusion and focus changes.

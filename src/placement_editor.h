@@ -36,7 +36,7 @@ static int PlacementControls(int index,int x,int y,int width){
     static double sent=0;
     if(placementAxis>=0&&GetTime()-sent>0.033){lab_placement_live(index,placementX,placementY,placementZoom);sent=GetTime();}
     if(changed){
-        if(lab_set_position(index,placementX,placementY))snprintf(notice,sizeof(notice),lab_tr("Posizione salvata e aggiornata sul desktop."));
+        if(lab_set_position(index,placementX,placementY))snprintf(notice,sizeof(notice),"Posizione salvata e aggiornata sul desktop.");
     }
     TextLines(lab_tr("Aumenta lo zoom per spostare il ritaglio."),x,y,width,12,2,muted);y+=38;
     return y-start;

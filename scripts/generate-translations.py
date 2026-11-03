@@ -9,4 +9,9 @@ for key,values in data.items():
   if pattern.findall(text)!=formats:raise SystemExit('Mismatched format: '+key+' -> '+text)
 raw=json.dumps(data,ensure_ascii=False,separators=(',',':'))
 if ')translations"' in raw:raise SystemExit('Invalid raw-string delimiter')
-target.parent.mkdir(parents=True,exist_ok=True);target.write_text('#pragma once\nstatic const char* translationsData=R"translations('+raw+')translations";\n')
+rules=json.loads((source.parent/'ui_messages.json').read_text())
+for key in rules.values():
+ if key not in data:raise SystemExit('Untranslated diagnostic: '+key)
+rules_raw=json.dumps(rules,ensure_ascii=False,separators=(',',':'))
+if ')messages"' in rules_raw:raise SystemExit('Invalid message delimiter')
+target.parent.mkdir(parents=True,exist_ok=True);target.write_text('#pragma once\nstatic const char* translationsData=R"translations('+raw+')translations";\nstatic const char* uiMessagesData=R"messages('+rules_raw+')messages";\n')

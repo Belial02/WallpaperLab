@@ -15,6 +15,43 @@ static const char* wsTags[]={
  "1280 x 720","1366 x 768","1920 x 1080","2560 x 1440","3840 x 2160",
  "Dual 3840 x 1080","Dual 5120 x 1440","Dual 7680 x 2160","Ultrawide 2560 x 1080","Ultrawide 3440 x 1440",
  "Triple 5760 x 1080","Triple 7680 x 1440","Portrait 720 x 1280","Portrait 1080 x 1920","Portrait 1440 x 2560","Portrait 2160 x 3840","Everyone","Questionable","Mature"};
+static const char* WorkshopTagLabel(const char* tag){
+ if(!strcmp(tag,"Scene"))return lab_tr("Scena");
+ if(!strcmp(tag,"Video"))return lab_tr("Video");
+ if(!strcmp(tag,"Web"))return lab_tr("Web");
+ if(!strcmp(tag,"Application"))return lab_tr("Applicazione");
+ if(!strcmp(tag,"Audio responsive"))return lab_tr("Reattivi");
+ if(!strcmp(tag,"Customizable"))return lab_tr("Personalizzabile");
+ if(!strcmp(tag,"Approved"))return lab_tr("Approvato");
+ if(!strcmp(tag,"Media Integration"))return lab_tr("Integrazione multimediale");
+ if(!strcmp(tag,"Anime"))return lab_tr("Anime");
+ if(!strcmp(tag,"Nature"))return lab_tr("Natura");
+ if(!strcmp(tag,"Landscape"))return lab_tr("Paesaggio");
+ if(!strcmp(tag,"Cyberpunk"))return lab_tr("Cyberpunk");
+ if(!strcmp(tag,"Game"))return lab_tr("Gioco");
+ if(!strcmp(tag,"Abstract"))return lab_tr("Astratto");
+ if(!strcmp(tag,"Fantasy"))return lab_tr("Fantasia");
+ if(!strcmp(tag,"Relaxing"))return lab_tr("Rilassante");
+ if(!strcmp(tag,"Sci-Fi"))return lab_tr("Fantascienza");
+ if(!strcmp(tag,"Music"))return lab_tr("Musica");
+ if(!strcmp(tag,"Technology"))return lab_tr("Tecnologia");
+ if(!strcmp(tag,"Animal"))return lab_tr("Animali");
+ if(!strcmp(tag,"Retro"))return lab_tr("Retro");
+ if(!strcmp(tag,"Pixel art"))return lab_tr("Arte pixel");
+ if(!strcmp(tag,"Everyone"))return lab_tr("Per tutti");
+ if(!strcmp(tag,"Questionable"))return lab_tr("Contenuti sensibili");
+ if(!strcmp(tag,"Mature"))return lab_tr("Contenuti per adulti");
+ return tag;
+}
+static const char* WorkshopTagList(const char* raw){
+ static char result[4096];result[0]=0;const char* cursor=raw;
+ while(*cursor){const char* end=strstr(cursor," · ");size_t length=end?(size_t)(end-cursor):strlen(cursor);char tag[1024];snprintf(tag,sizeof(tag),"%.*s",(int)length,cursor);
+  if(*result)strncat(result," · ",sizeof(result)-strlen(result)-1);
+  strncat(result,WorkshopTagLabel(tag),sizeof(result)-strlen(result)-1);
+  if(!end)break;cursor=end+strlen(" · ");
+ }
+ return result;
+}
 static const int wsTagCount=sizeof(wsTags)/sizeof(wsTags[0]);
 static bool wsWholeGroups[6]={0};
 static bool wsTagSelected[96]={0},wsGroups[6]={true,true,false,false,false,false};
@@ -65,7 +102,7 @@ static void WorkshopFilters(Rectangle area){
  const char* sortNames[]={"Popolari questa settimana","Migliori valutazioni","Più scaricati","Più recenti","Ultimi aggiornamenti","Rilevanza"};const char* sortIcons[]={"↗","★","↓","◷","↻","≡"};static char sortText[6][192];const char* sorts[6];for(int n=0;n<6;n++){snprintf(sortText[n],192,"%s %s",sortIcons[n],lab_tr(sortNames[n]));sorts[n]=sortText[n];};int previous=wsSort;wsSort=Choice(60,x,&y,w,lab_tr("Ordina"),sorts,6,wsSort);if(wsSort!=previous)wsFiltersDirty=true;
  if(Button((Rectangle){x,y,w,34},lab_tr("Azzera filtri"),true,true)){memset(wsTagSelected,0,sizeof(wsTagSelected));wsAuthor[0]=0;searchBuffer[0]=0;searchBufferCount=0;memset(wsWholeGroups,0,sizeof(wsWholeGroups));wsSort=0;wsAny=false;wsFiltersDirty=true;}y+=48;
  const int starts[]={0,4,10,24,40,43},ids[]={61,62,63,55,56};const char* groupNames[]={lab_tr("Tipo di sfondo"),lab_tr("Caratteristiche"),lab_tr("Genere"),lab_tr("Risoluzioni"),lab_tr("Classificazione dei contenuti")};
- for(int group=0;group<5;group++){if(group==3)continue;bool selected[64],before[64];const char* labels[64];char resolutionLabels[64][128];int count=starts[group+1]-starts[group];for(int n=0;n<count;n++){int index=starts[group]+n;selected[n]=before[n]=wsTagSelected[index];labels[n]=wsTags[index];if(group==3){const char* digit=wsTags[index];while(*digit&&(*digit<'0'||*digit>'9'))digit++;snprintf(resolutionLabels[n],128,"%s",digit);labels[n]=resolutionLabels[n];}}MultiChoice(ids[group],x,&y,w,groupNames[group],labels,count,selected);for(int n=0;n<count;n++){if(selected[n]!=before[n])wsFiltersDirty=true;wsTagSelected[starts[group]+n]=selected[n];}}
+ for(int group=0;group<5;group++){if(group==3)continue;bool selected[64],before[64];const char* labels[64];char resolutionLabels[64][128];int count=starts[group+1]-starts[group];for(int n=0;n<count;n++){int index=starts[group]+n;selected[n]=before[n]=wsTagSelected[index];labels[n]=WorkshopTagLabel(wsTags[index]);if(group==3){const char* digit=wsTags[index];while(*digit&&(*digit<'0'||*digit>'9'))digit++;snprintf(resolutionLabels[n],128,"%s",digit);labels[n]=resolutionLabels[n];}}MultiChoice(ids[group],x,&y,w,groupNames[group],labels,count,selected);for(int n=0;n<count;n++){if(selected[n]!=before[n])wsFiltersDirty=true;wsTagSelected[starts[group]+n]=selected[n];}}
  y+=12;UiText(lab_tr("Risoluzioni"),x,y,18,AppTheme.text);y+=30;
  bool selected[16],before[16];const char* labels[16];int groups[16];for(int n=0;n<16;n++){selected[n]=before[n]=wsTagSelected[24+n];const char* t=wsTags[24+n];groups[n]=!strncmp(t,"Dual",4)?1:!strncmp(t,"Ultrawide",9)?2:!strncmp(t,"Triple",6)?3:!strncmp(t,"Portrait",8)?4:0;while(*t&&(*t<'0'||*t>'9'))t++;labels[n]=t;}ResolutionPicker(x,&y,w,labels,groups,selected,16,wsWholeGroups);for(int n=0;n<16;n++){if(selected[n]!=before[n])wsFiltersDirty=true;wsTagSelected[n+24]=selected[n];}
  float total=y+wsFilterDraw-area.y+24;wsFilterScroll=Clamp(wsFilterScroll,0,fmaxf(0,total-area.height));EndScissorMode();inputClip=saved;
@@ -106,7 +143,7 @@ static void WorkshopInspector(Rectangle area){
  UiText(TextFormat("%.0f  %s  ·  %.0f  %s",lab_ws_number(i,"votes_up"),lab_tr("voti positivi"),lab_ws_number(i,"subscriptions"),lab_tr("sottoscrizioni")),x,y,13,muted);y+=24;
  UiText(TextFormat("%s %s",lab_tr("Pubblicato:"),WsDate(lab_ws_number(i,"created"))),x,y,13,muted);y+=22;
  UiText(TextFormat("%s %s",lab_tr("Aggiornato:"),WsDate(lab_ws_number(i,"updated"))),x,y,13,muted);y+=30;
- y+=TextLines(lab_ws_text(i,"tags"),x,y,w,14,12,AppTheme.border)+18;
+ y+=TextLines(WorkshopTagList(lab_ws_text(i,"tags")),x,y,w,14,12,AppTheme.border)+18;
  if(strstr(lab_ws_text(i,"tags"),"Application"))y+=TextLines(lab_tr("Applicazioni Windows: il download non garantisce la compatibilità con il renderer Linux."),x,y,w,14,4,(Color){236,166,103,255})+12;
  if(lab_ws_number(i,"children")>0){y+=TextLines(TextFormat(lab_tr("Dipendenze richieste: %.0f · download automatico"),lab_ws_number(i,"children")),x,y,w,14,3,muted)+14;}
  UiText(lab_tr("Descrizione dell'autore"),x,y,17,AppTheme.text);y+=30;

@@ -7,7 +7,8 @@ with the linux-wallpaperengine renderer. GPL-3.0.
 The current source adds named monitor selection, 25–300% live zoom, a compact
 **power icon**, a single library window, and a selectable monitor for Caelestia
 colours. Arcade includes vivid colours, animated pixel characters and cabinet-style
-buttons.
+buttons. Interface labels and application error summaries follow all 22 supported
+languages, including live language changes.
 See the [user guide](docs/USER_GUIDE.md#monitor-selection-zoom-and-stopping).
 
 ## Download and install

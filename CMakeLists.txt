@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(WallpaperLab VERSION 0.28.0 LANGUAGES C CXX)
+project(WallpaperLab VERSION 0.29.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_C_STANDARD 11)
 set(ENGINE_BUILD "${CMAKE_CURRENT_SOURCE_DIR}/build-engine" CACHE PATH "Built engine tree")
@@ -20,7 +20,7 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter)
 set(TRANSLATIONS_HEADER "${CMAKE_CURRENT_BINARY_DIR}/generated/translations_data.h")
 add_custom_command(OUTPUT "${TRANSLATIONS_HEADER}"
     COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate-translations.py" "${CMAKE_CURRENT_SOURCE_DIR}/src/translations.json" "${TRANSLATIONS_HEADER}"
-    DEPENDS src/translations.json scripts/generate-translations.py VERBATIM)
+    DEPENDS src/translations.json src/ui_messages.json scripts/generate-translations.py VERBATIM)
 pkg_check_modules(SDL2 REQUIRED sdl2)
 add_library(engine SHARED IMPORTED)
 set_target_properties(engine PROPERTIES IMPORTED_LOCATION "${ENGINE_BUILD}/output/liblinux-wallpaperengine-lib.so")

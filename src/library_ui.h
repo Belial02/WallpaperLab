@@ -36,7 +36,7 @@ static float starPulse[MAX_POSSIBLE_WALLPAPERS]={0},detailWidth=0,detailScroll=0
 static Rectangle libraryCards[MAX_POSSIBLE_WALLPAPERS],inspectorPreviewRect;
 static Rectangle inputClip,headerFilter,headerMoon,headerRefresh,headerDisplay,headerSettings,headerLibrary,headerCarousel,headerWorkshop,headerImport,headerPower,headerDecoration;
 static char notice[256]="";
-static void StartLibraryScan(void){if(lab_rescan_start()){scanning=true;snprintf(notice,sizeof(notice),lab_tr("Rilettura della libreria Steam..."));}}
+static void StartLibraryScan(void){if(lab_rescan_start()){scanning=true;snprintf(notice,sizeof(notice),"Rilettura della libreria Steam...");}}
 static const int headerHeight=164,statusHeight=42;
 #include "ui_theme.h"
 static Font LoadSystemFont(const char* path,int size,int* glyphs,int count);
@@ -246,9 +246,9 @@ static void RecordShortcut(void){
         if(key==KEY_ESCAPE){SetRecording(false);return;}
         const char* name=KeyName(key);if(!name)continue;
         int mods=(IsKeyDown(KEY_LEFT_SUPER)||IsKeyDown(KEY_RIGHT_SUPER)?64:0)|(IsKeyDown(KEY_LEFT_CONTROL)||IsKeyDown(KEY_RIGHT_CONTROL)?4:0)|(IsKeyDown(KEY_LEFT_ALT)||IsKeyDown(KEY_RIGHT_ALT)?8:0)|(IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)?1:0);
-        if(!mods){snprintf(notice,sizeof(notice),lab_tr("Usa Ctrl, Alt, Shift o Super con un tasto."));continue;}
+        if(!mods){snprintf(notice,sizeof(notice),"Usa Ctrl, Alt, Shift o Super con un tasto.");continue;}
         char combo[128]="";if(mods&64)strcat(combo,"SUPER+");if(mods&4)strcat(combo,"CTRL+");if(mods&8)strcat(combo,"ALT+");if(mods&1)strcat(combo,"SHIFT+");strcat(combo,name);
-        SetRecording(false);if(lab_set_shortcut(combo,1))snprintf(notice,sizeof(notice),lab_tr("Shortcut attivo: %s"),lab_shortcut());
+        SetRecording(false);if(lab_set_shortcut(combo,1))snprintf(notice,sizeof(notice),"Shortcut attivo: %s",lab_shortcut());
         return;
     }
 }
@@ -265,10 +265,10 @@ static Rectangle generalFontCheck;
 static void AppearanceFonts(int x,int* y,int w){
  const char* suggested[3];int count=LabSuggestedFonts(lab_option("ui_design"),suggested),selected=0;
  for(int i=0;i<count;i++)if(!strcmp(suggested[i],lab_theme_font()))selected=i;
- int chosen=Choice(33,x,y,w,"Suggested Theme Fonts",suggested,count,selected);if(chosen!=selected)lab_set_theme_font(suggested[chosen]);
+ int chosen=Choice(33,x,y,w,lab_tr("Font suggeriti dal tema"),suggested,count,selected);if(chosen!=selected)lab_set_theme_font(suggested[chosen]);
  const char* fonts[128];for(int i=0;i<lab_font_count();i++)fonts[i]=i?lab_font_name(i):lab_tr("Predefinito");
  int top=*y;bool enabled=lab_option("general_font_enabled");choiceReserve=36;choiceEnabled=enabled;
- chosen=Choice(35,x,y,w,"General Fonts",fonts,lab_font_count(),lab_font_selected());choiceReserve=0;choiceEnabled=true;
+ chosen=Choice(35,x,y,w,lab_tr("Font generali"),fonts,lab_font_count(),lab_font_selected());choiceReserve=0;choiceEnabled=true;
  if(chosen!=lab_font_selected())lab_set_font(chosen);
  generalFontCheck=(Rectangle){x+w-26,top+4,26,26};bool hot=Hot(generalFontCheck,!applying);
  ThemeButton(generalFontCheck,enabled?controlHover:control,false);ButtonFeedback(generalFontCheck,hot,hot&&IsMouseButtonDown(MOUSE_BUTTON_LEFT),enabled);
@@ -299,11 +299,11 @@ static void SettingsBody(Rectangle area){
         UiText(lab_tr("Shortcut del carousel"),x,y,18,AppTheme.text);y+=30;ShortcutInline(x,y,w);y+=50;
         int current=lab_shortcut_enabled();int value=BoolChoice(21,x,&y,w,lab_tr("Shortcut attivo"),current);if(value!=current)lab_set_shortcut(lab_shortcut(),value);
     }else if(settingsTab==3){
-        int design=lab_option("ui_design");int value=Choice(38,x,&y,w,"Themes",labDesignNames,LAB_DESIGN_COUNT,design);if(value!=design)lab_set_option("ui_design",value);
+        int design=lab_option("ui_design");int value=Choice(38,x,&y,w,lab_tr("Temi"),labDesignNames,LAB_DESIGN_COUNT,design);if(value!=design)lab_set_option("ui_design",value);
         AppearanceFonts(x,&y,w);
         const char* palettes[LAB_THEME_COUNT];int ids[LAB_THEME_COUNT],count=0,selected=0;
         for(int i=0;i<LAB_THEME_COUNT;i++)if(labThemes[i].collection==lab_option("ui_design")){ids[count]=i;palettes[count]=labThemes[i].name;if(i==lab_option("ui_theme"))selected=count;count++;}
-        value=Choice(30,x,&y,w,"Color Palettes",palettes,count,selected);if(value!=selected)lab_set_option("ui_theme",ids[value]);
+        value=Choice(30,x,&y,w,lab_tr("Palette di colori"),palettes,count,selected);if(value!=selected)lab_set_option("ui_theme",ids[value]);
         int backgroundTop=y,cw=fminf(292,w*.6f),bx=x+w-cw;bool custom=*lab_app_background();
         const char* cyberBackgrounds[]={"Neon District","Afterlife Alley","Binary Rain","Edge Signal",lab_tr("Carica dal PC")};
         const char* berryBackgrounds[]={"Strawberry Gingham","Ribbon Atelier","Strawberry Garden","Tea Party Lace",lab_tr("Carica dal PC")};
@@ -333,7 +333,7 @@ static void SettingsBody(Rectangle area){
         UiText(lab_tr("Librerie e file locali"),x,y,19,AppTheme.text);y+=32;
         y+=TextLines(lab_tr("Importa immagini e video. Gli originali restano al loro posto."),x,y,w,13,3,muted)+14;
         if(ActionGlyphButton((Rectangle){x,y,w,34},UI_IMPORT,!applying&&!lab_files_busy(),lab_tr("Importa file")))lab_files_start(0);y+=49;
-        for(int local=0;local<2;local++){UiText(lab_tr(local?"Sfondi locali":"Workshop Steam"),x,y,15,AppTheme.text);y+=25;y+=TextLines(lab_library_path(local),x,y,w,12,3,muted)+10;if(Button((Rectangle){x,y,w,32},lab_tr("Scegli cartella"),false,!applying&&!lab_files_busy()))lab_files_start(local?2:1);y+=48;}
+        for(int local=0;local<2;local++){UiText(lab_tr(local?"Sfondi locali":"Steam Workshop"),x,y,15,AppTheme.text);y+=25;y+=TextLines(lab_library_path(local),x,y,w,12,3,muted)+10;if(Button((Rectangle){x,y,w,32},lab_tr("Scegli cartella"),false,!applying&&!lab_files_busy()))lab_files_start(local?2:1);y+=48;}
         y+=TextLines(lab_tr("Cambiare cartella non sposta né elimina i file esistenti."),x,y,w,12,3,muted)+16;
     }else if(settingsTab==7){
         UiText("Caelestia",x,y,20,AppTheme.text);y+=34;
@@ -539,7 +539,7 @@ static void Inspector(Rectangle area){
     }
     if(liveTexture.id&&GetTime()-liveLastFrame<3)Cover(liveTexture,preview,false);
     else{Icon(UI_LIVE,(Vector2){preview.x+preview.width/2,preview.y+preview.height/2-12},muted,false);const char* state=*lab_reason(i)?lab_tr("Scena non supportata"):applying?lab_tr("Caricamento scena..."):lab_tr("In attesa della scena live");UiText(state,preview.x+12,preview.y+preview.height/2+14,14,muted);}
-    const char* badge=lab_screen()<lab_monitor_count()?TextFormat("LIVE · %s",lab_monitor_name(lab_screen())):"LIVE";
+    const char* badge=lab_screen()<lab_monitor_count()?TextFormat("%s · %s",lab_tr("ATTIVO"),lab_monitor_name(lab_screen())):lab_tr("ATTIVO");
     ThemePanel((Rectangle){x+8,y+8,UiMeasure(badge,12)+24,24},0.3f,6,Fade(BLACK,0.7f));UiText(badge,x+20,y+14,12,WHITE);
     y+=previewHeight+18;
     y+=TextLines(lab_title(i),x,y,w,22,3,AppTheme.text)+12;
@@ -578,7 +578,7 @@ static void Inspector(Rectangle area){
 static void StatusBar(int sw,int sh){
     DrawRectangle(0,sh-statusHeight,sw,statusHeight,surface);DrawLine(0,sh-statusHeight,sw,sh-statusHeight,lineColor);
     int active=lab_current();
-    const char* message=lab_files_busy()?lab_tr("Selezione o importazione file in corso..."):applying?lab_tr("Caricamento della scena..."):*lab_error()?lab_error():*notice?notice:active>=0?TextFormat(lab_tr("In riproduzione · %s"),lab_title(active)):lab_tr("Seleziona uno sfondo per vedere dettagli e azioni");
+    const char* message=lab_files_busy()?lab_tr("Selezione o importazione file in corso..."):applying?lab_tr("Caricamento della scena..."):*lab_error()?lab_error():*notice?lab_tr(notice):active>=0?TextFormat(lab_tr("In riproduzione · %s"),lab_title(active)):lab_tr("Seleziona uno sfondo per vedere dettagli e azioni");
     TextLines(message,28,sh-27,sw-360,14,1,*lab_error()?(Color){236,133,140,255}:muted);
     TextLines(lab_status(),sw-322,sh-26,294,14,1,muted);
 }
@@ -617,7 +617,7 @@ static void Modals(int sw,int sh){
         Color saved=AppTheme.border;AppTheme.border=(Color){218,72,84,255};
         if(Button((Rectangle){x+204,y+h-62,328,40},lab_tr("Sposta nel cestino"),true,deleteReady)){
             int target=deleteIndex;deleteIndex=-1;
-            if(lab_delete(target)){applying=true;snprintf(notice,sizeof(notice),lab_tr("Sostituzione ed eliminazione in corso..."));}
+            if(lab_delete(target)){applying=true;snprintf(notice,sizeof(notice),"Sostituzione ed eliminazione in corso...");}
         }
         AppTheme.border=saved;modalDrawing=false;
     }
@@ -693,12 +693,12 @@ static void CommitLibraryScan(pthread_t* loaders){
     if(selected_index<0)detailOpen=false;placementItem=-1;liveItem=-1;creatorItem=-1;creatorDrag=creatorCombo=creatorEdit=-1;g_hoveredIndex=selected_index;memset(starPulse,0,sizeof(starPulse));
     if(liveTexture.id){UnloadTexture(liveTexture);liveTexture=(Texture2D){0};}
     atomic_store(&next_load_index,0);atomic_store(&loader_running,true);for(int n=0;n<4;n++)pthread_create(&loaders[n],NULL,LoaderThread,NULL);
-    ReloadUiFonts();snprintf(notice,sizeof(notice),lab_tr("Libreria aggiornata · %d sfondi"),wallpaper_count);
+    ReloadUiFonts();snprintf(notice,sizeof(notice),"Libreria aggiornata · %d sfondi",wallpaper_count);
 }
 int selector_main(int argc,char**argv){
     LoadDefaultConfig();ParseConfigFile();g_base_thumb_size=420;g_max_threads=4;g_max_fps=90;
     SetTraceLogLevel(LOG_WARNING);LoadWallpapers(NULL);
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE|FLAG_MSAA_4X_HINT|FLAG_WINDOW_TRANSPARENT);InitWindow(1440,900,"Wallpaper Lab");SetWindowMinSize(1000,720);SetExitKey(KEY_NULL);SetTargetFPS(g_max_fps);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE|FLAG_MSAA_4X_HINT|FLAG_WINDOW_TRANSPARENT|(getenv("WALLPAPER_LAB_UI_HIDDEN")?FLAG_WINDOW_HIDDEN:0));InitWindow(1440,900,"Wallpaper Lab");SetWindowMinSize(1000,720);SetExitKey(KEY_NULL);SetTargetFPS(g_max_fps);
     ReloadUiFonts();InitBackdrop();InitIconAtlas();
     selected_index=lab_current();detailOpen=false;
     if(argc>1&&!strcmp(argv[1],"--display-settings")){settingsOpen=true;settingsTab=0;}
@@ -726,8 +726,8 @@ int selector_main(int argc,char**argv){
             int target=selected_index>=0?selected_index:wallpaper_count?0:-1;
             if(target>=0){smokeApplyStarted=true;applying=lab_start(target,0);}
         }
-        int removed=lab_deleted();if(removed>=0){deleted[removed]=true;if(selected_index==removed){selected_index=lab_current();detailOpen=selected_index>=0;}snprintf(notice,sizeof(notice),lab_tr("Sfondo spostato nel cestino del sistema."));}
-        if(completed){applying=false;if(completed>0&&removed<0)snprintf(notice,sizeof(notice),"%s",completed==1?lab_tr("Sfondo applicato"):lab_tr("Scena live aperta in una finestra separata"));}
+        int removed=lab_deleted();if(removed>=0){deleted[removed]=true;if(selected_index==removed){selected_index=lab_current();detailOpen=selected_index>=0;}snprintf(notice,sizeof(notice),"Sfondo spostato nel cestino del sistema.");}
+        if(completed){applying=false;if(completed>0&&removed<0)snprintf(notice,sizeof(notice),"%s",completed==1?"Sfondo applicato":"Scena live aperta in una finestra separata");}
         refreshClock+=dt;if(refreshClock>1&&!applying){lab_refresh();refreshClock=0;}
         bool escape=IsKeyPressed(KEY_ESCAPE);
         if(lab_switcher_preview_active()&&(escape||IsMouseButtonPressed(MOUSE_BUTTON_LEFT))){lab_cancel_switcher_preview();escape=false;}
@@ -778,6 +778,11 @@ int selector_main(int argc,char**argv){
         if(filterWidth>1)ThemePanel((Rectangle){filterWidth-2,top+(sh-top-statusHeight)/2-24,4,48},1,8,filterResizing?AppTheme.border:muted);
         if(detailWidth>1){float dx=sw-detailWidth;ThemePanel((Rectangle){dx-2,top+(sh-top-statusHeight)/2-24,4,48},1,8,detailResizing?AppTheme.border:muted);}
         Header(sw,top,count);StatusBar(sw,sh);if(CyberTheme())CyberInterfaceFX(sw,sh);ThemeWindowTrim(sw,sh);Modals(sw,sh);TransitionPreview();SwitcherPreview();AnimationCustomization();ChoiceOverlay();EndBlendMode();if(uiCanvasActive){EndTextureMode();ClearBackground(BLANK);BeginBlendMode(BLEND_ALPHA_PREMULTIPLY);DrawTexturePro(uiCanvas.texture,(Rectangle){0,0,sw,-sh},(Rectangle){0,0,sw,sh},(Vector2){0},0,WHITE);EndBlendMode();}EndDrawing();
+        // Capture the application's framebuffer, independent of desktop occlusion.
+        const char* captureDirectory=getenv("WALLPAPER_LAB_UI_CAPTURE");if(captureDirectory){
+            static int capturedLanguage=-1;int language=lab_option("language");
+            if(GetTime()>1&&capturedLanguage!=language){Image shot=LoadImageFromScreen();ExportImage(shot,TextFormat("%s/locale-%d.png",captureDirectory,language));UnloadImage(shot);capturedLanguage=language;}
+        }
         // Opt-in state evidence for isolated desktop interaction tests.
         stateClock+=dt;const char* stateOutput=getenv("WALLPAPER_LAB_UI_STATE");
         if(stateOutput&&stateClock>0.1f){stateClock=0;char temporary[4096];snprintf(temporary,sizeof(temporary),"%s.tmp.%d",stateOutput,getpid());FILE* f=fopen(temporary,"w");if(f){fprintf(f,"{\"page\":%d,\"detail\":%s,\"selection\":%d,\"results\":%d,\"settings\":%s,\"delete_confirmation\":%s,\"recording\":%s}\n",page,detailOpen?"true":"false",selected_index,count,settingsOpen?"true":"false",deleteIndex>=0?"true":"false",recordingKey?"true":"false");fclose(f);rename(temporary,stateOutput);FILE* style=fopen(TextFormat("%s.style",stateOutput),"w");if(style){fprintf(style,"{\"search_focus\":%s,\"search_count\":%d,\"search_cursor\":%d,\"search_anchor\":%d,\"applying\":%s,",isSearching?"true":"false",searchBufferCount,searchEdit.cursor,searchEdit.anchor,applying?"true":"false");fprintf(style,"\"transition_preview\":%s,\"switcher_preview\":%s,\"customize\":%d,\"transparency\":%d,",transitionPreview?"true":"false",switcherPreview?"true":"false",animationCustomize,lab_option("window_transparency"));fprintf(style,"\"display_popup\":%s,\"light\":%s,\"fps\":%d,\"creator_ms\":%.3f,\"language_menu\":%s,",displayPopup?"true":"false",lab_option("light_theme")?"true":"false",GetFPS(),creatorTimeMs,languageMenu?"true":"false");fprintf(style,"\"theme\":%d,\"design\":%d,\"language\":%d,\"font\":%d,\"font_revision\":%d,\"settings_tab\":%d,\"scanning\":%s,\"font_menu\":%s,\"shortcut\":\"%s\"}\n",lab_option("ui_theme"),lab_option("ui_design"),lab_option("language"),lab_font_selected(),seenFontRevision,settingsTab,scanning?"true":"false",fontMenu?"true":"false",lab_shortcut());fclose(style);}}FILE* geometry=fopen(TextFormat("%s.geometry",stateOutput),"w");if(geometry){LibraryGridLayout layout=library_grid_layout(content.width,Clamp((lab_option("layout_density")==1?220:lab_option("layout_density")==2?300:246)*masterScale,210,320));fprintf(geometry,"{\"filter_width\":%.1f,\"detail_width\":%.1f,\"tile\":%.1f,\"columns\":%d,\"groups\":{",filterWidth,detailWidth,layout.tile,layout.columns);

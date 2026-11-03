@@ -12,6 +12,39 @@ UI interaction are different checks; a pass in one is not certification of all
 Wallpaper Engine projects, drivers or desktops. Performance measurements below
 are observations from the test environment.
 
+## 0.28.0 — Power icon and Arcade refresh — 2026-11-03
+
+- Release application build and all 12 CTest checks passed, including catalog,
+  display layout, preferences, translations and Caelestia restoration.
+- `arcade_header_integration.py` passed with isolated XDG state and a read-only
+  fixture library. All four designs were captured at 1000, 1440 and 2200 pixels
+  wide. The compact power hitbox stayed clear of the navigation and right-side
+  decoration. Arcade character animation changed captured pixels; reduced motion
+  produced identical settled header frames. Screenshots were visually inspected.
+- The standalone artwork probe captured all four Arcade backgrounds, a character
+  and button contact sheet, and eight chase stages. Sprite rows were validated as
+  16 × 16. Small icon controls are round cabinet buttons; text controls have raised
+  bezels. The four palettes retain their IDs with brighter, saturated accents.
+- `monitor_session_integration.py --desktop` passed: clicking the new power icon
+  stopped both owned outputs, exited the library and restored the original test
+  palette. Monitor dropdowns, live zoom-out padding, independent palette source,
+  failed replacement preservation, duplicate launches and crash reopening passed.
+- The lifecycle integration scanned 106 entries, opened native scene/video
+  previews and preserved a foreign process during stop. Tests used synthetic
+  libraries and preserved the existing desktop renderer and palette.
+- The hidden native popup regression passed 32 captures over 20 independent
+  colours and all four layouts, retaining plain styling and transparent margins.
+  Its initial ownership check overlapped runtime installation; the isolated rerun
+  after installation passed with the personal renderer unchanged.
+- The local runtime was installed as 0.28.0 and restored the saved wallpaper.
+
+The first still-frame comparison caught compositor resize motion; the final
+visual test waits for settled geometry before comparing frames. Character art is
+hand-drawn in code, with no extracted game sprites or asset packs. The decoration
+is scripted, not playable game logic. Visual checks cover the tested Hyprland
+session and fixture library; performance and other desktops are not certified.
+Evidence remains under `local/arcade-028/` and is excluded from Git.
+
 ## 0.27.0 — Monitor controls and application lifetime — 2026-11-03
 
 - Release engine library and application builds passed. All 12 CTest checks passed,

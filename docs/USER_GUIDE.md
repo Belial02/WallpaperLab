@@ -179,7 +179,7 @@ The live inspector's **Zoom** slider accepts **25–300%**. Values below 100% sh
 the image and reveal black padding outside the source. Position and zoom persist
 per project and update the renderer live; Workshop thumbnails remain unchanged.
 
-Use **Stop and quit** in the top right to stop all Wallpaper Lab desktop renderers,
+Use the **power icon** in the top right (hover: **Stop and quit**) to stop all Wallpaper Lab desktop renderers,
 close previews and exit the library. The existing desktop background underneath
 becomes visible again; its background service must still be running. Normal window
 close keeps animated wallpapers running. `wallpaper-lab --stop` stops the desktop

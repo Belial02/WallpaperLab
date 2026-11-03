@@ -49,15 +49,28 @@ animations. Small side accents appear on text buttons.
 ## Arcade
 
 Formerly Pixel Theme; existing palette, background and font settings retain their
-stable IDs. Stepped panels, neon cabinet rows, prize machines, candy platforms,
-stars and a crescent moon use original geometric pixel drawings. Palettes remain
+stable IDs. The four palettes now use saturated magenta, lime, gold and electric
+cyan on dark backgrounds. Stepped panels, neon cabinet rows, prize machines,
+candy platforms, stars and a crescent moon use code-drawn pixel artwork. Palettes remain
 **Arcade Berry**, **Dungeon Moss**, **Coin Rush** and **CRT Ocean**. Backgrounds are
 **Neon Arcade**, **Candy Quest**, **Coin-op Club** and **Star Dream**.
 
 A decorative Pac-Man chase loops along the lower edge: dots, a power pellet,
 blue ghosts, four captures with 200/400/800/1600 scores and returning eyes. This is
 a scripted animation, not an interactive game or a simulation of the original
-maze AI. Reduced motion freezes it, the header mascot and the background stars.
+maze AI. A clipped header parade adds a red-capped runner, blue hedgehog, alien
+invader, mushroom, green adventurer and falling-block shapes alongside the chomper
+and ghosts. These small pixel tributes are drawn in code; no extracted game
+sprites or asset packs are shipped. Animated steps, jumps, spinning coins, moving
+prize claws and stars distinguish the four backgrounds. Reduced motion freezes
+all automatic Arcade animation, including the parade, marquee lights and coins.
+
+Small icon controls resemble round cabinet buttons. Text controls have raised,
+stepped bezels, highlight edges and inset shadows; hover lights the rim and a
+press darkens the face. Action buttons use distinct vivid colours. The header
+reserves a compact power icon at the right, with its action described on hover.
+Navigation becomes icon-only when labels would crowd that reserved space, and
+right-side artwork is omitted when there is insufficient room.
 Silkscreen is bundled under SIL OFL 1.1; alternative suggested fonts include
 Oxanium and DejaVu Sans Mono.
 

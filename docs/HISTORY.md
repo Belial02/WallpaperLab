@@ -1,6 +1,6 @@
 # Development history
 
-This public summary records implementation milestones through version 0.27.
+This public summary records implementation milestones through version 0.28.
 Historical behavior and test counts apply to their named versions; current usage
 is in the [user guide](USER_GUIDE.md), and verification limits are in
 [test results](../tests/RESULTS.md).
@@ -197,3 +197,12 @@ conditionally. Duplicate library launches focus the existing instance; renderer
 and CLI lifetimes stay independent. Caelestia can use a saved source monitor for
 its global palette, independently of the application's current monitor selection.
 Upstream and installed Caelestia still use a global Colours singleton.
+
+## 0.28 — Compact power control and vivid Arcade artwork
+
+Replaced the stop text button with a power icon and reserved header space across
+all four designs. Narrow windows use compact navigation and decorative art stays
+clear of controls. Arcade retains its palette IDs with more saturated colours,
+new animated pixel tributes, coins and prize claws, a visible header parade and
+raised rectangular or round cabinet-style buttons. Reduced motion freezes all
+automatic Arcade decoration. The four carousel layouts keep their plain styling.

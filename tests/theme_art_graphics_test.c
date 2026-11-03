@@ -31,5 +31,18 @@ int main(int argc,char** argv){
  BeginTextureMode(target);ClearBackground(AppTheme.bg);
  float stages[]={0,3.8f,4.5f,5.5f,6.5f,7.5f,8.6f,11};
  for(int i=0;i<8;i++)ArcadeChaseFrame((Rectangle){20,15+i*86,1240,70},stages[i]);
- EndTextureMode();save(target,argv[1],"arcade-chase-stages");UnloadRenderTexture(target);CloseWindow();return 0;
+ EndTextureMode();save(target,argv[1],"arcade-chase-stages");
+ motion=1;BeginTextureMode(target);ClearBackground(AppTheme.bg);
+ DrawText("ARCADE / CHARACTER & CONTROL STUDY",32,20,24,AppTheme.text);
+ for(int kind=0;kind<4;kind++)for(int frame=0;frame<2;frame++)ArcadeHero(40+kind*290,76+frame*110,5,kind,frame);
+ for(int i=0;i<4;i++){
+  AppTheme.border=ThemeHex(labThemes[17+i].accent);
+  ArcadeButton((Rectangle){40+i*300,350,240,48},surface);
+  ArcadeButton((Rectangle){40+i*300,420,240,48},AppTheme.border);
+  ArcadeButton((Rectangle){50+i*300,490,44,44},surface);
+  ArcadeButton((Rectangle){120+i*300,490,44,44},AppTheme.border);
+ }
+ ArcadeMarquee((Rectangle){32,600,1216,70});
+ EndTextureMode();save(target,argv[1],"arcade-characters-controls");
+ UnloadRenderTexture(target);CloseWindow();return 0;
 }

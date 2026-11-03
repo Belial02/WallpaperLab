@@ -4,8 +4,10 @@ Animated wallpapers, a native Steam Workshop browser, and a customizable desktop
 carousel for **Arch Linux x86_64**. One application combines a raylib interface
 with the linux-wallpaperengine renderer. GPL-3.0.
 
-The current source adds named monitor selection, 25–300% live zoom, **Stop and
-quit**, a single library window, and a selectable monitor for Caelestia colours.
+The current source adds named monitor selection, 25–300% live zoom, a compact
+**power icon**, a single library window, and a selectable monitor for Caelestia
+colours. Arcade includes vivid colours, animated pixel characters and cabinet-style
+buttons.
 See the [user guide](docs/USER_GUIDE.md#monitor-selection-zoom-and-stopping).
 
 ## Download and install

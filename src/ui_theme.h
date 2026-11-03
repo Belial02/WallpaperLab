@@ -41,14 +41,17 @@ static void ThemePanel(Rectangle r,float roundness,int segments,Color color){
  if(effect==10&&r.width>90&&r.height>34)DrawRectangleRoundedLinesEx(r,radius,segments,1,Fade(AppTheme.border,.12f));
 }
 static void ThemeButton(Rectangle r,Color color,bool textOnly){
- if(StrawberryTheme())BerryCookie(r,color);else ThemePanel(r,.22f,12,color);
+ if(StrawberryTheme())BerryCookie(r,color);else if(PixelTheme())ArcadeButton(r,color);else ThemePanel(r,.22f,12,color);
  if(CyberTheme()&&textOnly&&r.width>70){DrawRectangle(r.x+6,r.y+8,2,fminf(12,r.height-16),Fade(CyberSecondary(),.65f));}
 }
 static void ButtonFeedback(Rectangle r,bool hot,bool pressed,bool active){
  if(StrawberryTheme()){
   if(hot||active)DrawRectangleRoundedLinesEx((Rectangle){r.x+1,r.y+1,r.width-2,r.height-2},1,20,hot?2:1.3f,Fade(AppTheme.border,pressed?.9f:hot?.75f:.5f));
   if(hot)DrawRectangleRounded((Rectangle){r.x+5,r.y+4,r.width-10,r.height-8},1,20,Fade(pressed?ThemeHex(0xc9974f):WHITE,pressed?.15f:.2f));
- }else if(PixelTheme()&&hot){DrawRectangleLinesEx(r,2,AppTheme.border);if(pressed)DrawRectangle(r.x+2,r.y+2,r.width-4,r.height-4,Fade(AppTheme.border,.2f));}
+ }else if(PixelTheme()){
+  if(ArcadeRoundButton(r)){Vector2 c={r.x+r.width/2,r.y+r.height/2};float radius=fminf(r.width,r.height)/2-2;if(hot||active)DrawRing(c,radius-1,radius,0,360,32,hot?ThemeHex(0xffe500):AppTheme.border);if(pressed)DrawCircleV(c,radius-3,Fade(BLACK,.32f));}
+  else{if(hot||active)DrawRectangleLinesEx((Rectangle){r.x+1,r.y+1,r.width-2,r.height-2},2,hot?ThemeHex(0xffe500):ArcadeCyan());if(pressed){DrawRectangle(r.x+3,r.y+3,r.width-6,r.height-6,Fade(BLACK,.30f));DrawLine(r.x+4,r.y+3,r.x+r.width-4,r.y+3,AppTheme.border);}}
+ }
 }
 static void InitBackdrop(void){
  const char* fs="#version 330 core\nin vec2 fragTexCoord;out vec4 finalColor;uniform vec2 resolution;uniform float time,style,alpha;uniform vec3 base,accent;\n"
@@ -101,6 +104,10 @@ static void DrawBackdrop(int width,int height){
  if(effect==3||effect==2){for(int n=0;n<10;n++){float px=fmodf(n*173.3f+width*.13f+sinf(time*.2f+n)*24,width),py=fmodf(n*97.1f+time*(effect==3?8:3),height);DrawEllipse(px,py,effect==3?2.5f:1.4f,effect==3?1.3f:1.4f,Fade(AppTheme.border,lab_option("light_theme")?.12f:.1f));}}
 }
 static void ThemeWindowTrim(int sw,int sh){
+ if(PixelTheme()){
+  Color lights[]={ThemeHex(0xff2ba6),ArcadeCyan(),ThemeHex(0xffe500),ThemeHex(0x71ff28)};int phase=(int)(ArcadeTime()*2)%4;
+  for(int x=8,n=0;x<sw-8;x+=16,n++){Color ink=lights[(n+phase)%4];DrawRectangle(x,2,9,3,ink);DrawRectangle(x,sh-5,9,3,ink);}return;
+ }
  if(CyberTheme()){
   DrawLine(2,2,sw-2,2,Fade(AppTheme.border,.6f));
   for(int n=0;n<12;n++)DrawRectangle(sw-150+n*11,sh-4,6,2,Fade(n%3?AppTheme.border:CyberSecondary(),lab_option("reduce_motion")?.6f:.45f+.25f*sinf(GetTime()*2+n*.6f)));return;

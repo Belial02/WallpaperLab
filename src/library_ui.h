@@ -34,7 +34,7 @@ static bool settingsOpen=false,filtersOpen=false,detailOpen=false,recordingKey=f
 static bool deleted[MAX_POSSIBLE_WALLPAPERS]={0},modalDrawing=false,inputBlocked=false;
 static float starPulse[MAX_POSSIBLE_WALLPAPERS]={0},detailWidth=0,detailScroll=0,settingsScroll=0,detailScrollDraw=0,settingsScrollDraw=0;
 static Rectangle libraryCards[MAX_POSSIBLE_WALLPAPERS],inspectorPreviewRect;
-static Rectangle inputClip,headerFilter,headerMoon,headerRefresh,headerDisplay,headerSettings,headerLibrary,headerCarousel,headerWorkshop,headerImport;
+static Rectangle inputClip,headerFilter,headerMoon,headerRefresh,headerDisplay,headerSettings,headerLibrary,headerCarousel,headerWorkshop,headerImport,headerPower,headerDecoration;
 static char notice[256]="";
 static void StartLibraryScan(void){if(lab_rescan_start()){scanning=true;snprintf(notice,sizeof(notice),lab_tr("Rilettura della libreria Steam..."));}}
 static const int headerHeight=164,statusHeight=42;
@@ -44,8 +44,10 @@ static void ReloadUiFonts(void);
 static Font fontPreview[96];
 static float SmoothScroll(float current,float target){if(lab_option("reduce_motion"))return target;return fabsf(current-target)<.1f?target:Lerp(current,target,1-expf(-GetFrameTime()*15));}
 #include "shaped_text.h"
-static void CyberWordmark(float x,float y){
+static void CyberWordmark(float left,float right,float y){
  ShapedText* title=ShapeFamily("2077",54,lab_option("general_font_enabled")?lab_font_family():"Orbitron");
+ if(right-left<title->width+74)return;
+ float x=right-title->width-64;headerDecoration=(Rectangle){x-10,y-2,title->width+74,86};
  bool glitch=!lab_option("reduce_motion")&&fmodf(GetTime(),1.8f)<.32f;
  if(glitch){DrawTexture(title->texture,x-3,y+1,Fade(CyberSecondary(),.55f));DrawTexture(title->texture,x+3,y-1,Fade(AppTheme.border,.45f));}
  DrawTexture(title->texture,x,y,AppTheme.border);
@@ -111,10 +113,11 @@ static void StarIcon(Vector2 c,float radius,Color color,bool filled){
     Vector2 points[10];for(int n=0;n<10;n++){float a=(-90+n*36)*DEG2RAD,r=radius*(n%2?0.46f:1);points[n]=(Vector2){c.x+cosf(a)*r,c.y+sinf(a)*r};}
     for(int n=0;n<10;n++){if(filled)DrawTriangle(c,points[(n+1)%10],points[n],color);DrawLineEx(points[n],points[(n+1)%10],1.6f,color);}
 }
-typedef enum {UI_STAR,UI_TRASH,UI_GEAR,UI_MOON,UI_SEARCH,UI_FILTER,UI_CLOSE,UI_PLAY,UI_LIVE,UI_LOGO,UI_KEY,UI_EYE,UI_LIBRARY,UI_CAROUSEL,UI_REFRESH,UI_DISPLAY,UI_DOWNLOAD,UI_CHECK,UI_IMPORT,UI_CUSTOM,UI_LEFT,UI_RIGHT} UiIcon;
+typedef enum {UI_STAR,UI_TRASH,UI_GEAR,UI_MOON,UI_SEARCH,UI_FILTER,UI_CLOSE,UI_PLAY,UI_LIVE,UI_LOGO,UI_KEY,UI_EYE,UI_LIBRARY,UI_CAROUSEL,UI_REFRESH,UI_DISPLAY,UI_DOWNLOAD,UI_CHECK,UI_IMPORT,UI_CUSTOM,UI_LEFT,UI_RIGHT,UI_POWER} UiIcon;
 static Texture2D iconAtlas;
 static void IconRaw(UiIcon icon,Vector2 c,Color ink,bool fill){
     switch(icon){
+    case UI_POWER:DrawRing(c,7.5f,9.5f,-48,228,40,ink);DrawLineEx((Vector2){c.x,c.y-12},(Vector2){c.x,c.y-1},2.6f,ink);break;
     case UI_STAR:StarIcon(c,10,ink,fill);break;
     case UI_TRASH:
         DrawLineEx((Vector2){c.x-8,c.y-6},(Vector2){c.x+8,c.y-6},1.8f,ink);
@@ -155,11 +158,15 @@ static void IconRaw(UiIcon icon,Vector2 c,Color ink,bool fill){
     }
 }
 static RenderTexture2D iconAtlasTarget;
-static void InitIconAtlas(void){iconAtlasTarget=LoadRenderTexture(40*3*(UI_RIGHT+1),40*3*2);BeginTextureMode(iconAtlasTarget);ClearBackground(BLANK);rlPushMatrix();rlScalef(3,3,1);for(int row=0;row<2;row++)for(int n=0;n<=UI_RIGHT;n++)IconRaw(n,(Vector2){n*40+20,row*40+20},WHITE,row);rlPopMatrix();EndTextureMode();iconAtlas=iconAtlasTarget.texture;GenTextureMipmaps(&iconAtlas);SetTextureFilter(iconAtlas,TEXTURE_FILTER_TRILINEAR);}
+static void InitIconAtlas(void){iconAtlasTarget=LoadRenderTexture(40*3*(UI_POWER+1),40*3*2);BeginTextureMode(iconAtlasTarget);ClearBackground(BLANK);rlPushMatrix();rlScalef(3,3,1);for(int row=0;row<2;row++)for(int n=0;n<=UI_POWER;n++)IconRaw(n,(Vector2){n*40+20,row*40+20},WHITE,row);rlPopMatrix();EndTextureMode();iconAtlas=iconAtlasTarget.texture;GenTextureMipmaps(&iconAtlas);SetTextureFilter(iconAtlas,TEXTURE_FILTER_TRILINEAR);}
 static void Icon(UiIcon icon,Vector2 c,Color ink,bool fill){if(!iconAtlas.id){IconRaw(icon,c,ink,fill);return;}DrawTexturePro(iconAtlas,(Rectangle){icon*120,fill?0:120,120,-120},(Rectangle){c.x-20,c.y-20,40,40},(Vector2){0},0,ink);}
 static bool GlyphButton(Rectangle r,UiIcon icon,bool active,bool enabled,const char* label){
     bool hot=Hot(r,enabled);bool star=icon==UI_STAR;
     Color bg=star&&!StrawberryTheme()?(Color){31,35,41,255}:active?controlHover:hot?controlHover:control;if(icon==UI_KEY&&active&&recordingKey)bg=(Color){26,89,55,255};
+    if(PixelTheme()){
+        Color tone=icon==UI_POWER||icon==UI_TRASH?ThemeHex(0xff3049):icon==UI_IMPORT?ThemeHex(0x71ff28):icon==UI_FILTER||star?ThemeHex(0xffcf00):icon==UI_REFRESH||icon==UI_LIBRARY?ThemeHex(0x2474ff):icon==UI_DISPLAY?ArcadeCyan():AppTheme.border;
+        bg=ColorLerp(surface,tone,active?.68f:hot?.60f:.38f);bg.a=control.a;
+    }
     ThemeButton(r,enabled?bg:Fade(bg,0.5f),false);ButtonFeedback(r,hot,hot&&IsMouseButtonDown(MOUSE_BUTTON_LEFT),active);
     Color ink=icon==UI_TRASH?(Color){236,105,115,255}:star&&!StrawberryTheme()?WHITE:AppTheme.text;
     if(StrawberryTheme()&&icon!=UI_TRASH)ink=ThemeHex(0x654325);
@@ -402,23 +409,28 @@ static void SearchBar(Rectangle r){
 }
 #include "workshop_ui.h"
 static void Header(int sw,int top,int count){
+    headerPower=(Rectangle){sw-68,22,44,38};headerDecoration=(Rectangle){0};
     DrawRectangle(0,0,sw,top,AppTheme.bg);
     if(StrawberryTheme()){
         for(int x=0;x<sw;x+=32)DrawRectangle(x,0,16,top,Fade(AppTheme.border,.035f));
         BerryLace(0,top-11,sw);BerryBunny(40,31,.48f);
-        if(sw>1160){BerryBow(sw-144,29,.8f);BerryFruit(sw-80,37,20);BerryBunny(sw-52,88,.9f);}
     }else if(PixelTheme()){ArcadePac(46,39,2,false,lab_option("reduce_motion")?0:GetTime());ArcadeStar(69,25,1,AppTheme.border);}else if(CyberTheme()){
         for(int x=0;x<sw;x+=8)DrawRectangle(x,0,3,2,Fade(AppTheme.border,.45f));
 
-        if(sw>1160)CyberWordmark(sw-286,12);
     }else Icon(UI_LOGO,(Vector2){44,40},AppTheme.text,false);
     if(CyberTheme()){
         DrawRectangle(24,22,3,31,AppTheme.border);ShapedText* brand=ShapeFamily("WALLPAPER LAB",22,lab_option("general_font_enabled")?lab_font_family():"Oxanium");DrawTexture(brand->texture,39,20,AppTheme.text);
     }else UiText("Wallpaper Lab",72,22,25,AppTheme.text);
     float navX=fmaxf(285,72+UiMeasure("Wallpaper Lab",25)+30);const char* navNames[]={lab_tr("Libreria"),lab_tr("Carousel"),"Workshop"};UiIcon navIcons[]={UI_LIBRARY,UI_CAROUSEL,UI_DOWNLOAD};
-    for(int i=0;i<3;i++){int navPage=i==2?3:i;float width=UiMeasure(lab_tr(navNames[i]),15)+62;if(i==0)headerLibrary=(Rectangle){navX,22,width,38};else if(i==1)headerCarousel=(Rectangle){navX,22,width,38};else headerWorkshop=(Rectangle){navX,22,width,38};if(GlyphButton((Rectangle){navX,22,width,38},navIcons[i],page==navPage,!applying,lab_tr(navNames[i])))ChangePage(navPage);navX+=width+8;}
-    if(Button((Rectangle){sw-202,22,178,38},lab_tr("Spegni e esci"),false,!applying&&!lab_files_busy())){if(lab_stop_wallpapers())quitWallpaperLab=true;else snprintf(notice,sizeof(notice),"%s",lab_error());}
+    float navWidth=0;for(int i=0;i<3;i++)navWidth+=UiMeasure(navNames[i],15)+70;
+    bool compactNav=navX+navWidth+64>headerPower.x;
+    for(int i=0;i<3;i++){int navPage=i==2?3:i;float width=compactNav?44:UiMeasure(navNames[i],15)+62;if(i==0)headerLibrary=(Rectangle){navX,22,width,38};else if(i==1)headerCarousel=(Rectangle){navX,22,width,38};else headerWorkshop=(Rectangle){navX,22,width,38};if(GlyphButton((Rectangle){navX,22,width,38},navIcons[i],page==navPage,!applying,compactNav?"":navNames[i]))ChangePage(navPage);navX+=width+8;}
+    if(GlyphButton(headerPower,UI_POWER,false,!applying&&!lab_files_busy(),"")){if(lab_stop_wallpapers())quitWallpaperLab=true;else snprintf(notice,sizeof(notice),"%s",lab_error());}
     headerSettings=(Rectangle){navX,22,40,38};if(GlyphButton(headerSettings,UI_GEAR,settingsOpen||page==2,!applying,"")){settingsOpen=!settingsOpen;choiceOpen=-1;settingsScroll=settingsScrollDraw=0;SetRecording(false);}
+    if(StrawberryTheme()&&headerPower.x-navX>224){BerryBow(sw-206,29,.8f);BerryFruit(sw-142,37,20);BerryBunny(sw-114,88,.9f);headerDecoration=(Rectangle){sw-232,5,146,110};}
+    if(CyberTheme()&&sw>1160)CyberWordmark(navX+64,headerPower.x-20,12);
+    if(PixelTheme()){headerDecoration=(Rectangle){navX+60,10,fmaxf(0,headerPower.x-navX-80),60};ArcadeMarquee(headerDecoration);}
+    if(Hot(headerPower,true))UiText(lab_tr("Spegni e esci"),sw-24-UiMeasure(lab_tr("Spegni e esci"),12),70,12,muted);
     UiText(page==0?lab_tr("Libreria"):page==1?lab_tr("Carousel"):page==3?"Workshop":lab_tr("Impostazioni"),28,94,23,AppTheme.text);
     UiText(page==2?lab_tr("Tutto in un posto"):TextFormat(lab_tr("%d sfondi"),page==3?(int)lab_ws_number(-1,"total"):libraryTotal),28,126,13,muted);
     if(page!=2){
@@ -643,7 +655,7 @@ static void CustomizationGeometry(FILE* f){
     fprintf(f,",\"themes\":");GeometryCenters(f,themeChoices,LAB_THEME_COUNT);fprintf(f,",\"languages\":");GeometryCenters(f,languageChoices,lab_language_count());fprintf(f,",\"density\":");GeometryCenters(f,densityChoices,3);
     fprintf(f,",\"zoom_track\":[%.1f,%.1f,%.1f],\"creator_reset\":[%.1f,%.1f],\"color_swatch\":[%.1f,%.1f],\"color_box\":[%.1f,%.1f,%.1f,%.1f]",zoomTrack.x,zoomTrack.y,zoomTrack.width,creatorReset.x+creatorReset.width/2,creatorReset.y+creatorReset.height/2,creatorColorSwatch.x+creatorColorSwatch.width/2,creatorColorSwatch.y+creatorColorSwatch.height/2,creatorColorBox.x,creatorColorBox.y,creatorColorBox.width,creatorColorBox.height);
     fprintf(f,",\"color_hue\":[%.1f,%.1f,%.1f,%.1f]",creatorHue.x,creatorHue.y,creatorHue.width,creatorHue.height);
-    fprintf(f,",\"stop_and_quit\":[%d,41]",GetScreenWidth()-113);
+    fprintf(f,",\"stop_and_quit\":[%.1f,%.1f],\"power_rect\":[%.1f,%.1f,%.1f,%.1f],\"header_decoration\":[%.1f,%.1f,%.1f,%.1f]",headerPower.x+headerPower.width/2,headerPower.y+headerPower.height/2,headerPower.x,headerPower.y,headerPower.width,headerPower.height,headerDecoration.x,headerDecoration.y,headerDecoration.width,headerDecoration.height);
     fprintf(f,",\"display_cards\":");GeometryCenters(f,displayCards,lab_monitor_count());fprintf(f,",\"display_selected\":%d,\"screen\":%d,\"animation_controls\":",displaySelected,lab_screen());Rectangle animations[]={switcherEye,transitionEye,switcherCustomize,transitionCustomize};GeometryCenters(f,animations,4);
     fprintf(f,",\"number_tracks\":{");bool firstNumber=true;for(int id=0;id<160;id++)if(numberTracks[id].width){Rectangle r=numberTracks[id];fprintf(f,"%s\"%d\":[%.1f,%.1f,%.1f]",firstNumber?"":",",id,r.x,r.y,r.width);firstNumber=false;}fprintf(f,"}");
     fprintf(f,",\"display_save\":[%.1f,%.1f]",displaySaveButton.x+displaySaveButton.width/2,displaySaveButton.y+displaySaveButton.height/2);

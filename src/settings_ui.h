@@ -28,7 +28,7 @@ static int ToggleChoice(int id,int x,int* y,int w,const char* label,const char**
  return next!=value?(selected<0?0:1-selected):selected;
 }
 static int Choice(int id,int x,int* py,int w,const char* label,const char** options,int count,int selected){
- if(count==2&&id!=38)return ToggleChoice(id,x,py,w,label,options,selected);
+ if(count==2&&id!=38&&id!=4&&id!=80&&id!=81)return ToggleChoice(id,x,py,w,label,options,selected);
  choiceToggle[id]=false;
  int result=selected;if(choicePending==id){result=choiceValue;choicePending=-1;}
  int y=*py;int cw=*label?fminf(292,w*.60f):w;TextLines(label,x,y+5,w-cw-8,13,2,AppTheme.text);Rectangle box={x+w-cw,y,cw-choiceReserve,34};choiceControls[id]=box;choiceCounts[id]=count;*py+=43;
@@ -49,7 +49,8 @@ static void MultiChoice(int id,int x,int* y,int w,const char* label,const char**
 }
 static void ChoiceOverlay(void){
  if(choiceOpen<0)return;int id=choiceOpen,count=choiceCounts[id],visible=fminf(7,count);Rectangle box=choiceControls[id];
- choiceList=(Rectangle){box.x,box.y+box.height+4,fmaxf(box.width,240),visible*34+8};choiceList.x=Clamp(choiceList.x,8,GetScreenWidth()-choiceList.width-8);if(choiceList.y+choiceList.height>GetScreenHeight()-12)choiceList.y=box.y-choiceList.height-4;
+ float menuWidth=fmaxf(box.width,240);if(id==4||id==80||id==81)for(int n=0;n<count;n++)menuWidth=fmaxf(menuWidth,UiMeasure(choiceLabels[n],14)+44);menuWidth=fminf(menuWidth,GetScreenWidth()-16);
+ choiceList=(Rectangle){box.x,box.y+box.height+4,menuWidth,visible*34+8};choiceList.x=Clamp(choiceList.x,8,GetScreenWidth()-choiceList.width-8);if(choiceList.y+choiceList.height>GetScreenHeight()-12)choiceList.y=box.y-choiceList.height-4;
  Color oldSurface=surface,oldControl=control,oldHover=controlHover,oldLine=lineColor;surface.a=control.a=controlHover.a=lineColor.a=255;
  Rectangle old=inputClip;inputClip=(Rectangle){0,0,GetScreenWidth(),GetScreenHeight()};bool modal=modalDrawing;modalDrawing=true;choiceRendering=true;
  ThemePanel((Rectangle){choiceList.x-3,choiceList.y-3,choiceList.width+6,choiceList.height+6},.06f,8,lineColor);ThemePanel(choiceList,.06f,8,surface);

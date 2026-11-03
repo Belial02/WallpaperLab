@@ -1,3 +1,4 @@
+static bool quitWallpaperLab=false;
 // Native library shell shared by Library, Carousel and Settings.
 // Kept separate from the transient compositor popup renderer.
 #include "font_fallback.h"
@@ -330,6 +331,8 @@ static void SettingsBody(Rectangle area){
     }else if(settingsTab==7){
         UiText("Caelestia",x,y,20,AppTheme.text);y+=34;
         int current=lab_option("caelestia_enabled"),value=BoolChoice(73,x,&y,w,lab_tr("Colori dal wallpaper"),current);if(current!=value)lab_set_option("caelestia_enabled",value);
+        if(lab_monitor_count()){const char* outputs[32];int count=lab_monitor_count()<32?lab_monitor_count():32;for(int i=0;i<count;i++)outputs[i]=lab_monitor(i);int screen=lab_caelestia_screen(),chosen=Choice(80,x,&y,w,lab_tr("Monitor per i colori"),outputs,count,screen);if(chosen!=screen)lab_caelestia_set_screen(chosen);}
+        y+=TextLines(lab_tr("Caelestia usa una palette globale. Scegli il monitor da cui ricavare i colori."),x,y,w,13,4,muted)+12;
         const char* palettes[]={lab_tr("Vivace"),lab_tr("Toni morbidi"),lab_tr("Espressiva"),lab_tr("Fedele al wallpaper")};int palette=lab_option("caelestia_palette"),next=Choice(78,x,&y,w,lab_tr("Palette dinamica"),palettes,4,palette);if(next!=palette)lab_set_option("caelestia_palette",next);
         const char* modes[]={lab_tr("Automatica"),lab_tr("Scura"),lab_tr("Chiara")};int mode=lab_option("caelestia_mode");next=Choice(79,x,&y,w,lab_tr("Luminosità della palette"),modes,3,mode);if(next!=mode)lab_set_option("caelestia_mode",next);
         y+=TextLines(lab_tr("L’attivazione prepara solo i componenti colore opzionali. La shell Caelestia resta separata."),x,y,w,12,4,muted)+14;
@@ -414,6 +417,7 @@ static void Header(int sw,int top,int count){
     }else UiText("Wallpaper Lab",72,22,25,AppTheme.text);
     float navX=fmaxf(285,72+UiMeasure("Wallpaper Lab",25)+30);const char* navNames[]={lab_tr("Libreria"),lab_tr("Carousel"),"Workshop"};UiIcon navIcons[]={UI_LIBRARY,UI_CAROUSEL,UI_DOWNLOAD};
     for(int i=0;i<3;i++){int navPage=i==2?3:i;float width=UiMeasure(lab_tr(navNames[i]),15)+62;if(i==0)headerLibrary=(Rectangle){navX,22,width,38};else if(i==1)headerCarousel=(Rectangle){navX,22,width,38};else headerWorkshop=(Rectangle){navX,22,width,38};if(GlyphButton((Rectangle){navX,22,width,38},navIcons[i],page==navPage,!applying,lab_tr(navNames[i])))ChangePage(navPage);navX+=width+8;}
+    if(Button((Rectangle){sw-202,22,178,38},lab_tr("Spegni e esci"),false,!applying&&!lab_files_busy())){if(lab_stop_wallpapers())quitWallpaperLab=true;else snprintf(notice,sizeof(notice),"%s",lab_error());}
     headerSettings=(Rectangle){navX,22,40,38};if(GlyphButton(headerSettings,UI_GEAR,settingsOpen||page==2,!applying,"")){settingsOpen=!settingsOpen;choiceOpen=-1;settingsScroll=settingsScrollDraw=0;SetRecording(false);}
     UiText(page==0?lab_tr("Libreria"):page==1?lab_tr("Carousel"):page==3?"Workshop":lab_tr("Impostazioni"),28,94,23,AppTheme.text);
     UiText(page==2?lab_tr("Tutto in un posto"):TextFormat(lab_tr("%d sfondi"),page==3?(int)lab_ws_number(-1,"total"):libraryTotal),28,126,13,muted);
@@ -533,6 +537,7 @@ static void Inspector(Rectangle area){
     if(InspectorSection(0,x,&y,w,lab_tr("Display di destinazione"))){
         if(lab_mode()==2&&lab_monitor_count())TextLines(lab_monitor(lab_screen()),x,y,w,13,2,muted);else TextLines(lab_mode()==0?lab_tr("Tutti i display · Panoramico"):lab_tr("Tutti i display · Duplicato"),x,y,w,12,2,muted);y+=28;
         int next;
+        if(lab_mode()==2&&lab_monitor_count()){const char* outputs[32];int count=lab_monitor_count()<32?lab_monitor_count():32;for(int n=0;n<count;n++)outputs[n]=lab_monitor(n);int screen=lab_screen();next=Choice(81,x,&y,w,lab_tr("Display di destinazione"),outputs,count,screen);if(next!=screen)lab_set_screen(next);}
         int variant=lab_variant_selected(i),variants=fminf(94,lab_variant_count(i));const char* options[96];options[0]=lab_tr("Originale / automatica");for(int v=0;v<variants;v++)options[v+1]=lab_variant_label(i,v);choiceEnabled=variants>0;next=Choice(70,x,&y,w,lab_tr("Risoluzione dello sfondo"),options,variants+1,variant+1);choiceEnabled=true;if(next!=variant+1&&lab_variant_set(i,next-1)&&!uiSmoke)applying=lab_start(i,0);y+=10;
     }
     if(InspectorSection(1,x,&y,w,lab_tr("Immagine e ritaglio"))){y+=ImageControls(i,x,y,w);y+=PlacementControls(i,x,y,w)+12;}
@@ -638,6 +643,7 @@ static void CustomizationGeometry(FILE* f){
     fprintf(f,",\"themes\":");GeometryCenters(f,themeChoices,LAB_THEME_COUNT);fprintf(f,",\"languages\":");GeometryCenters(f,languageChoices,lab_language_count());fprintf(f,",\"density\":");GeometryCenters(f,densityChoices,3);
     fprintf(f,",\"zoom_track\":[%.1f,%.1f,%.1f],\"creator_reset\":[%.1f,%.1f],\"color_swatch\":[%.1f,%.1f],\"color_box\":[%.1f,%.1f,%.1f,%.1f]",zoomTrack.x,zoomTrack.y,zoomTrack.width,creatorReset.x+creatorReset.width/2,creatorReset.y+creatorReset.height/2,creatorColorSwatch.x+creatorColorSwatch.width/2,creatorColorSwatch.y+creatorColorSwatch.height/2,creatorColorBox.x,creatorColorBox.y,creatorColorBox.width,creatorColorBox.height);
     fprintf(f,",\"color_hue\":[%.1f,%.1f,%.1f,%.1f]",creatorHue.x,creatorHue.y,creatorHue.width,creatorHue.height);
+    fprintf(f,",\"stop_and_quit\":[%d,41]",GetScreenWidth()-113);
     fprintf(f,",\"display_cards\":");GeometryCenters(f,displayCards,lab_monitor_count());fprintf(f,",\"display_selected\":%d,\"screen\":%d,\"animation_controls\":",displaySelected,lab_screen());Rectangle animations[]={switcherEye,transitionEye,switcherCustomize,transitionCustomize};GeometryCenters(f,animations,4);
     fprintf(f,",\"number_tracks\":{");bool firstNumber=true;for(int id=0;id<160;id++)if(numberTracks[id].width){Rectangle r=numberTracks[id];fprintf(f,"%s\"%d\":[%.1f,%.1f,%.1f]",firstNumber?"":",",id,r.x,r.y,r.width);firstNumber=false;}fprintf(f,"}");
     fprintf(f,",\"display_save\":[%.1f,%.1f]",displaySaveButton.x+displaySaveButton.width/2,displaySaveButton.y+displaySaveButton.height/2);
@@ -691,7 +697,7 @@ int selector_main(int argc,char**argv){
     bool uiTest=argc>1&&!strcmp(argv[1],"--ui-test");uiSmoke=uiTest||getenv("WALLPAPER_LAB_UI_READ_ONLY");inspectorSize=lab_option("inspector_width")>0?lab_option("inspector_width"):390;if(uiTest){smokeStage=0;smokeStart=GetTime();}
     pthread_t loaders[4];for(int n=0;n<4;n++)pthread_create(&loaders[n],NULL,LoaderThread,NULL);
     float refreshClock=0,stateClock=0;
-    while(!WindowShouldClose()){
+    while(!WindowShouldClose()&&!quitWallpaperLab){
         if(argc>1&&!strcmp(argv[1],"--workshop-ui-test")&&GetTime()>6)break;
         if(seenFontRevision!=lab_font_revision())ReloadUiFonts();
         if(IsFileDropped()){FilePathList dropped=LoadDroppedFiles();if(!lab_files_busy()&&!applying)lab_import_files((const char* const*)dropped.paths,dropped.count);UnloadDroppedFiles(dropped);}

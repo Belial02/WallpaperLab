@@ -166,10 +166,50 @@ Pango/Cairo handles Unicode shaping and Fontconfig fallback, including scene
 text. Required script fonts must be installed. RTL text is shaped, but panel
 layouts remain left-to-right.
 
+## Monitor selection, zoom and stopping
+
+Open the monitor button or **Settings → Displays**. The destination dropdown lists
+model, connector and resolution; the map uses numbered connector labels, with the
+complete selected monitor name below it. In **Single monitor** mode, select a
+monitor in the map, dropdown or live inspector before applying a wallpaper.
+Panorama and mirror still target all connected outputs. Changing the selected
+monitor does not apply a wallpaper by itself.
+
+The live inspector's **Zoom** slider accepts **25–300%**. Values below 100% shrink
+the image and reveal black padding outside the source. Position and zoom persist
+per project and update the renderer live; Workshop thumbnails remain unchanged.
+
+Use **Stop and quit** in the top right to stop all Wallpaper Lab desktop renderers,
+close previews and exit the library. The existing desktop background underneath
+becomes visible again; its background service must still be running. Normal window
+close keeps animated wallpapers running. `wallpaper-lab --stop` stops the desktop
+renderers without opening a window. Both stop actions conditionally restore the
+previous Caelestia palette, respecting later manual edits. Saved wallpapers remain
+available to `--restore`; autostart and shortcuts are not changed.
+
+Only one library window runs per XDG state directory. Another launch focuses the
+existing library on Hyprland and exits, including settings and Workshop launch
+commands. Renderer workers, CLI operations and the transient carousel keep their
+separate lifetimes. The kernel releases the library lock even after a crash.
+
 ## Optional Caelestia integration
 
 Enable **Settings → Integrations → Caelestia → Wallpaper colors** to derive shell
-colors from a wallpaper. It is initially disabled. Install Caelestia separately.
+colors from a wallpaper. **Colour source monitor** chooses the output whose
+wallpaper supplies the shared palette, independently of the currently selected
+application monitor. The saved source uses the connector name; if disconnected,
+the first connected output is used without replacing the saved choice. If that
+output has no running wallpaper, the previous palette stays in place.
+
+Upstream Caelestia's [Colours service](https://github.com/caelestia-dots/shell/blob/main/services/Colours.qml)
+uses a singleton palette and one `scheme.json`; its per-monitor configuration does
+not provide independent wallpaper-derived shell palettes (checked 2026-11-03,
+including the installed shell). Wallpaper Lab therefore selects one source for
+all shell bars and widgets. Fork-specific per-monitor palette APIs are not used.
+The same source can be selected with `wallpaper-lab --caelestia-source DP-1`
+(replace the connector with one listed by `--display-layout`).
+
+The integration is initially disabled. Install Caelestia separately.
 The optional Python dependencies use existing modules or a private environment
 at `$XDG_DATA_HOME/wallpaper-lab/integrations/caelestia/venv`. Preparation may need
 Internet access and Python venv support; it does not use sudo or change global

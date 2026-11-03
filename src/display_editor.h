@@ -6,6 +6,12 @@ static int DisplayEditor(int x,int y,int w){
     int start=y;if(displayDragging<0&&lab_mode()==2)displaySelected=lab_screen();
     UiText(lab_tr("Disposizione dei monitor"),x,y,26,AppTheme.text);y+=36;
     const char* modes[]={lab_tr("Panoramico"),lab_tr("Duplicato"),lab_tr("Un monitor")};int at=lab_mode();int next=Choice(1,x,&y,w,lab_tr("Modalita"),modes,3,at);if(next!=at){lab_set_mode(next);if(next==2)lab_set_screen(displaySelected);}
+    if(lab_monitor_count()){
+        const char* outputs[32];int count=lab_monitor_count()<32?lab_monitor_count():32;
+        for(int i=0;i<count;i++)outputs[i]=lab_monitor(i);
+        int chosen=Choice(4,x,&y,w,lab_tr("Display di destinazione"),outputs,count,displaySelected);
+        if(chosen!=displaySelected){displaySelected=chosen;lab_set_screen(chosen);}
+    }
     Rectangle chart={x,y,w,Clamp(inputClip.height-350,130,200)};ThemePanel(chart,0.03f,12,control);
     UiText(lab_display_physical()?lab_tr("Dimensioni reali · trascina i monitor"):lab_tr("Pixel logici · trascina i monitor"),chart.x+12,chart.y+8,12,muted);
     Rectangle parent=inputClip;
@@ -37,10 +43,11 @@ static int DisplayEditor(int x,int y,int w){
         bool selected=displaySelected==i;
         ThemePanel(r,0.06f,8,surface);
         DrawRectangleRoundedLinesEx(r,0.06f,8,selected?2.5f:1.4f,selected?AppTheme.border:muted);
-        if(r.width>100&&r.height>70){
+        if(r.width>50&&r.height>28){
             const char* title=TextFormat("%d · %s",i+1,lab_monitor_name(i));
-            UiText(title,r.x+(r.width-UiMeasure(title,17))/2,r.y+r.height/2-26,17,AppTheme.text);
-            TextLines(lab_display_info(i),r.x+12,r.y+r.height/2+1,r.width-24,13,2,muted);
+            int size=r.width<130?12:15;
+            TextLines(title,r.x+8,r.y+r.height/2-8,r.width-16,size,1,AppTheme.text);
+            if(r.height>110)TextLines(lab_display_info(i),r.x+12,r.y+r.height/2+16,r.width-24,12,2,muted);
         }
         if(hot){
             SetMouseCursor(MOUSE_CURSOR_RESIZE_ALL);
@@ -54,6 +61,7 @@ static int DisplayEditor(int x,int y,int w){
     if(!lab_monitor_count())UiText(lab_tr("Nessun monitor disponibile"),x+24,y+90,18,muted);
     y+=chart.height+12;
     if(lab_monitor_count()){
+        y+=TextLines(lab_monitor(displaySelected),x,y,w,14,3,AppTheme.text)+8;
         float px,py,pw,ph;lab_display_rect(displaySelected,&px,&py,&pw,&ph);
         UiText(TextFormat(lab_display_physical()?lab_tr("Posizione: %.1f, %.1f mm · dimensioni rilevate del pannello"):lab_tr("Posizione: %.0f, %.0f px logici"),px,py),x,y,13,muted);y+=20;
     }

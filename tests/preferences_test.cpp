@@ -13,6 +13,7 @@ int main(){
     auto root=fs::current_path()/("wallpaper-lab-preferences-"+std::to_string(getpid()));
     setenv("XDG_CONFIG_HOME",(root/"config").c_str(),1);setenv("XDG_STATE_HOME",(root/"state").c_str(),1);
     try {
+        require(wallpaperPosition(json{{"fixture",{{"position",{{"x",0},{"y",0},{"zoom",0.5}}}}}},"fixture")["zoom"]==0.5,"saved zoom out lost");
         for(int design=0;design<LAB_DESIGN_COUNT;design++)for(int palette=0;palette<LAB_THEME_COUNT;palette++){
             writeJson(configDir()/"settings.json",{{"theme_scoped_v3",true},{"ui_design",design},{"ui_theme",palette},{"light_theme",false}});
             auto loaded=loadSettings();require(labThemes[loaded["ui_theme"].get<int>()].collection==design,"cross-theme palette accepted");

@@ -32,7 +32,7 @@ json wallpaperPosition(const json& profiles,const std::string& path){
     try{
         const auto& p=profiles.at(path).at("position");
         double x=p.at("x"),y=p.at("y");
-        if(std::isfinite(x)&&std::isfinite(y)&&std::abs(x)<=1&&std::abs(y)<=1)return {{"x",x},{"y",y},{"zoom",std::clamp(p.value("zoom",1.0),1.0,3.0)}};
+        if(std::isfinite(x)&&std::isfinite(y)&&std::abs(x)<=1&&std::abs(y)<=1)return {{"x",x},{"y",y},{"zoom",std::clamp(p.value("zoom",1.0),0.25,3.0)}};
     }catch(...){}return result;
 }
 void saveWallpaperPosition(const std::string& path,double x,double y){

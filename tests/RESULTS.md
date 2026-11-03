@@ -12,6 +12,47 @@ UI interaction are different checks; a pass in one is not certification of all
 Wallpaper Engine projects, drivers or desktops. Performance measurements below
 are observations from the test environment.
 
+## 0.27.0 — Monitor controls and application lifetime — 2026-11-03
+
+- Release engine library and application builds passed. All 12 CTest checks passed,
+  including catalog, display layout, preferences,
+  Caelestia restoration, translations and installer checks. New assertions cover
+  zoom-out geometry, rejection of zero/negative scales, persisted zoom below 100%
+  and monitor model/description/connector fallbacks.
+- `monitor_session_integration.py --desktop` passed on two Hyprland outputs with
+  disposable XDG directories and local images. It verified monitor labels, named
+  two-monitor dropdowns, an independently persisted palette source, changes through
+  the actual Caelestia settings dropdown, two surviving renderers after a failed
+  replacement, and a native 50% zoom frame with black borders and a visible center.
+- Four duplicate launch paths exited while the existing library and renderers
+  remained alive. Stop and quit closed the library, stopped both owned outputs and
+  restored the original test palette. Reopening worked after normal exit and
+  SIGKILL. The existing desktop renderers and palette were preserved during tests.
+- The standard lifecycle integration scanned 106 catalog entries, opened native
+  scene and video previews, and preserved a foreign process during `--stop`.
+- Screenshots of monitor selection, Caelestia source selection and the zoomed
+  framebuffer were inspected. Small monitor map cards retain connector labels;
+  full model, connector and resolution remain available below the map and in the
+  expanded dropdown. Evidence and generated fixtures remain under `local/`.
+- The ordered engine patch series, including `engine-zoom-out.patch`, passed
+  reverse verification without changing the dependency pins or pre-existing
+  submodule edits. A standalone source archive passed safe-path validation and
+  patch application; all 109 checked patched inputs matched the built worktree.
+- The local runtime was installed as 0.27.0 and the saved desktop wallpaper was
+  restored successfully. The GitHub repository remained public.
+
+Caelestia upstream and the installed shell were checked: `Colours.qml` is a
+singleton consuming one `scheme.json`. The source selector drives that global
+palette; independent per-monitor palettes and fork-specific APIs are unsupported.
+A disconnected source falls back to the first detected output; a source with no
+owned renderer leaves the existing palette unchanged. The stop action reveals an
+existing background surface; restarting a previously stopped third-party
+background service is outside this change. Graphical checks cover the tested
+Hyprland setup and fixture media, not all projects or compositors. Transient
+carousel windows and renderer workers retain separate lifetimes from the single
+library window. The published beta installer remains the separately named release
+linked from the README; source and local runtime are version 0.27.0.
+
 ## Documentation cleanup — 2026-10-29
 
 Repository documentation and contributor instructions were rewritten in English.

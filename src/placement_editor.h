@@ -26,8 +26,8 @@ static int PlacementControls(int index,int x,int y,int width){
     UiText(lab_tr("Zoom"),x,y,15,AppTheme.text);UiText(TextFormat("%.0f%%",placementZoom*100),x+width-48,y,14,muted);
     zoomTrack=(Rectangle){x+4,y+27,width-8,5};
     if(Hot((Rectangle){x,y+16,width,26},!applying)&&IsMouseButtonPressed(MOUSE_BUTTON_LEFT))placementAxis=2;
-    if(placementAxis==2){placementZoom=1+Clamp((GetMouseX()-zoomTrack.x)/zoomTrack.width,0,1)*2;if(!IsMouseButtonDown(MOUSE_BUTTON_LEFT)){placementAxis=-1;lab_zoom_set(index,placementZoom);}}
-    ThemePanel(zoomTrack,1,8,controlHover);DrawRectangleRec((Rectangle){zoomTrack.x,zoomTrack.y,(placementZoom-1)/2*zoomTrack.width,5},AppTheme.border);DrawCircle(zoomTrack.x+(placementZoom-1)/2*zoomTrack.width,zoomTrack.y+2,7,AppTheme.text);
+    if(placementAxis==2){placementZoom=.25f+Clamp((GetMouseX()-zoomTrack.x)/zoomTrack.width,0,1)*2.75f;if(!IsMouseButtonDown(MOUSE_BUTTON_LEFT)){placementAxis=-1;lab_zoom_set(index,placementZoom);}}
+    ThemePanel(zoomTrack,1,8,controlHover);DrawRectangleRec((Rectangle){zoomTrack.x,zoomTrack.y,(placementZoom-.25f)/2.75f*zoomTrack.width,5},AppTheme.border);DrawCircle(zoomTrack.x+(placementZoom-.25f)/2.75f*zoomTrack.width,zoomTrack.y+2,7,AppTheme.text);
     y+=46;UiText(lab_tr("Posizione dello sfondo"),x,y,16,AppTheme.text);y+=26;
     bool changed=PositionSlider((Rectangle){x,y,width,48},lab_tr("Sinistra / destra"),&placementX,0);y+=48;
     changed=PositionSlider((Rectangle){x,y,width,48},lab_tr("Alto / basso"),&placementY,1)||changed;y+=48;

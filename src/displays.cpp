@@ -10,7 +10,11 @@ std::vector<Display> parseDisplays(const json& list){
     for(auto& row:list){
         try{
             if(row.value("disabled",false))continue;
-            Display d;d.name=row.at("name");d.model=row.value("model",d.name);
+            Display d;d.name=row.at("name");d.model=row.value("model",std::string());
+            if(d.model.empty())d.model=row.value("description",std::string());
+            if(d.model.empty())d.model=d.name;
+            // Avoid multiline EDID labels breaking cards and dropdown rows.
+            for(char& c:d.model)if((unsigned char)c<32)c=' ';
             d.width=row.at("width");d.height=row.at("height");if(d.width<1||d.height<1||d.name.empty()||!seen.insert(d.name).second)continue;
             d.mmWidth=row.value("physicalWidth",0.0);d.mmHeight=row.value("physicalHeight",0.0);
             if(row.value("transform",0)%2){std::swap(d.width,d.height);std::swap(d.mmWidth,d.mmHeight);}

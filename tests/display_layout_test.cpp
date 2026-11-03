@@ -8,6 +8,14 @@ void require(bool value,const char* message){if(!value)throw std::runtime_error(
 template<class F>void rejects(F f,const char* message){bool failed=false;try{f();}catch(...){failed=true;}require(failed,message);}
 int main(){try{
     namespace placement=WallpaperEngine::Render::Helpers::WallpaperPlacement;
+    auto zoomedOut=placement::parse(R"({"x":0,"y":0,"zoom":0.25})");
+    float start=0,end=1;placement::zoomRange(start,end,zoomedOut.zoom);
+    require(start==-1.5f&&end==2.5f,"zoom out UV range incorrect");
+    require(placement::cropShift(2,1)==-.5f,"zoom out cannot be repositioned");
+    rejects([]{placement::parse(R"({"x":0,"y":0,"zoom":0})");},"zero zoom accepted");
+    rejects([]{placement::parse(R"({"x":0,"y":0,"zoom":-1})");},"negative scale accepted");
+    auto labels=parseDisplays(json::array({{{"name","DP-1"},{"model",""},{"description","Display vendor model"},{"width",1920},{"height",1080}},{{"name","DP-2"},{"width",1920},{"height",1080}}}));
+    require(labels[0].model=="Display vendor model"&&labels[1].model=="DP-2","monitor label fallbacks failed");
     auto pan=placement::parse("{\"x\":0.4,\"y\":-0.5}");
     require(std::abs(placement::shift(1,pan.x)+0.2)<0.00001,"positive horizontal pan must sample earlier pixels");
     require(placement::shift(-1,pan.y)==-0.25,"vertical flip did not preserve pan direction");

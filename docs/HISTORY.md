@@ -1,6 +1,6 @@
 # Development history
 
-This public summary records implementation milestones through the 0.24 open beta.
+This public summary records implementation milestones through version 0.27.
 Historical behavior and test counts apply to their named versions; current usage
 is in the [user guide](USER_GUIDE.md), and verification limits are in
 [test results](../tests/RESULTS.md).
@@ -187,3 +187,13 @@ layouts retain their geometry and animation and expose only Color palette for
 appearance, independently of the UI. Old themed switcher colors migrate to the
 closest Default accent in the same mode. Other UI themes remain available for
 later design work.
+
+## 0.27 — Monitor controls and application lifetime
+
+Added named monitor dropdowns, model/description fallbacks and bounded map labels.
+The live image zoom range is now 25–300%, with black padding when shrinking.
+Stop and quit stops every owned output and restores the previous Caelestia palette
+conditionally. Duplicate library launches focus the existing instance; renderer
+and CLI lifetimes stay independent. Caelestia can use a saved source monitor for
+its global palette, independently of the application's current monitor selection.
+Upstream and installed Caelestia still use a global Colours singleton.

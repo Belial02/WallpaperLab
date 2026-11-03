@@ -4,6 +4,10 @@ Animated wallpapers, a native Steam Workshop browser, and a customizable desktop
 carousel for **Arch Linux x86_64**. One application combines a raylib interface
 with the linux-wallpaperengine renderer. GPL-3.0.
 
+The current source adds named monitor selection, 25–300% live zoom, **Stop and
+quit**, a single library window, and a selectable monitor for Caelestia colours.
+See the [user guide](docs/USER_GUIDE.md#monitor-selection-zoom-and-stopping).
+
 ## Download and install
 
 [**Download the Arch Linux beta installer**](https://github.com/scolapvsta/WallpaperLab/releases/download/v0.24.0-beta.1/Wallpaper-Lab-0.24.0-beta.1-Arch-x86_64.run)

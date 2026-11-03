@@ -1,0 +1,30 @@
+--- a/src/WallpaperEngine/Render/Helpers/WallpaperPlacement.h
++++ b/src/WallpaperEngine/Render/Helpers/WallpaperPlacement.h
+@@ -21,7 +21,7 @@
+ 	throw std::runtime_error ("Wallpaper position outside [-1, 1]");
+     }
+     double zoom=j.value("zoom",1.0);
+-    if(!std::isfinite(zoom)||zoom<1||zoom>3)throw std::runtime_error("Invalid wallpaper zoom");
++    if(!std::isfinite(zoom)||zoom<0.25||zoom>3)throw std::runtime_error("Invalid wallpaper zoom");
+     return { static_cast<float> (x), static_cast<float> (y), static_cast<float>(zoom) };
+ }
+ inline const Position& configured () {
+@@ -66,6 +66,6 @@
+ // Positive means move the image right/down, sampling an earlier source area.
+ // Use the complete canvas UV range, never the individual monitor slice range.
+ inline void zoomRange(float& start,float& end,float zoom){float center=(start+end)*.5f,half=(end-start)*.5f/zoom;start=center-half;end=center+half;}
+-inline float cropShift(float range,float offset){return -std::copysign(std::max(0.f,1.f-std::abs(range)),range)*offset*.5f;}
++inline float cropShift(float range,float offset){return -std::copysign(std::abs(1.f-std::abs(range)),range)*offset*.5f;}
+ inline float shift (float range, float offset) { return -range * offset * 0.5f; }
+ }
+--- a/src/WallpaperEngine/Render/CWallpaper.cpp
++++ b/src/WallpaperEngine/Render/CWallpaper.cpp
+@@ -298,7 +298,7 @@
+     glDisable (GL_CULL_FACE);
+     // do not use any shader
+     glUseProgram (this->m_shader);
+-    glUniform1i(glGetUniformLocation(this->m_shader, "g_PanPadding"), position.x != 0 || position.y != 0);
++    glUniform1i(glGetUniformLocation(this->m_shader, "g_PanPadding"), position.x != 0 || position.y != 0 || position.zoom < 1);
+     // activate scene texture
+     glActiveTexture (GL_TEXTURE0);
+     glBindTexture (GL_TEXTURE_2D, this->getWallpaperTexture ());

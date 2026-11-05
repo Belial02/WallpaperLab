@@ -9,7 +9,7 @@ env=os.environ|{'HOME':str(home),'XDG_CONFIG_HOME':str(home/'config'),'XDG_DATA_
 installer=a.installer.resolve();launcher=home/'.local/bin/wallpaper-lab';results={}
 def run(*args):return subprocess.check_output([str(x)for x in args],env=env,text=True,stderr=subprocess.STDOUT,timeout=180)
 (out/'install.log').write_text(run('bash',installer,'--yes','--no-launch'))
-receipt=home/'data/wallpaper-lab/installation.json';first=json.loads(receipt.read_text());runtime=pathlib.Path(first['runtime']);results['clean_install_cli']=('0.24.0'in run(launcher,'--version') and json.loads(run(launcher,'--list'))==[])
+receipt=home/'data/wallpaper-lab/installation.json';first=json.loads(receipt.read_text());runtime=pathlib.Path(first['runtime']);results['clean_install_cli']=(first['version'] in run(launcher,'--version') and json.loads(run(launcher,'--list'))==[])
 results['workshop_runtime_hash_verified']=(runtime/'lib/libsteam_api.so').exists()
 prefs=home/'config/wallpaper-lab/settings.json';prefs.parent.mkdir(parents=True,exist_ok=True);prefs.write_text(json.dumps({'ui_design':3,'theme_scoped_v3':True,'ui_theme':17,'muted':True,'beta_sentinel':'keep'}));before=prefs.read_bytes()
 old_renderer=None;personal_before=None

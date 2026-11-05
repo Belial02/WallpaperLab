@@ -1,1 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="15" fill="#16191d"/><rect x="11" y="11" width="42" height="42" rx="9" fill="none" stroke="#eceef1" stroke-width="2.5"/><path d="M17 44 29 28 37 36 46 24" fill="none" stroke="#eceef1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="40" cy="21" r="3" fill="#eceef1"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Wallpaper Lab</title>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#101820"/>
+  <rect x="12" y="15" width="40" height="34" rx="5" fill="#f5fbff"/>
+  <path d="M16 43 27 29 36 39 42 32 48 40v5H16z" fill="#087f8c"/>
+  <circle cx="42" cy="25" r="4" fill="#087f8c"/>
+</svg>

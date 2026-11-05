@@ -13,6 +13,7 @@
 // Peace :) - danihek
 
 #include "raylib.h"
+#include "app_icon.h"
 #include "raymath.h"
 #include "rlgl.h"
 #include <stdio.h>
@@ -773,7 +774,7 @@ int carousel_popup_main(void) {
     // Capture-only hidden surfaces allow graphical checks without desktop input.
     unsigned int captureFlags=captureDir&&getenv("WALLPAPER_LAB_POPUP_HIDDEN")?FLAG_WINDOW_HIDDEN:0;
     SetConfigFlags(FLAG_WINDOW_UNDECORATED|FLAG_WINDOW_TRANSPARENT|FLAG_MSAA_4X_HINT|captureFlags);
-    InitWindow(frame.width,frame.height,"Wallpaper Lab Carousel");InitBackdrop();SetExitKey(KEY_NULL);SetTargetFPS(120);
+    InitWindow(frame.width,frame.height,"Wallpaper Lab Carousel");SetAppIcon();InitBackdrop();SetExitKey(KEY_NULL);SetTargetFPS(120);
     uiFont=LoadSystemFont(lab_font(),28,NULL,0);if(!uiFont.texture.id)uiFont=GetFontDefault();SetTextureFilter(uiFont.texture,TEXTURE_FILTER_BILINEAR);
     InitPopupImages();
     RenderTexture2D panel=LoadRenderTexture(layout.width,layout.height);
@@ -867,5 +868,5 @@ int carousel_popup_main(void) {
     if(IsRenderTextureValid(canvas))UnloadRenderTexture(canvas);
     if(IsRenderTextureValid(panel))UnloadRenderTexture(panel);
     if(backdropShader.id)UnloadShader(backdropShader);UnloadShader(popupImageShader);if(uiFont.texture.id!=GetFontDefault().texture.id)UnloadFont(uiFont);
-    CloseWindow();return choice;
+    UnloadTexture(appIconTexture);CloseWindow();return choice;
 }

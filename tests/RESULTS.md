@@ -12,6 +12,17 @@ UI interaction are different checks; a pass in one is not certification of all
 Wallpaper Engine projects, drivers or desktops. Performance measurements below
 are observations from the test environment.
 
+## 1.0.0 — Release, icon and installer — 2026-11-05
+
+- Release build and CTest: **13/13 passed**, including catalog, preferences, installer integrity and checksum download helper (valid and tampered payloads).
+- Actual packaged installer in isolated HOME/XDG: clean install, upgrade, preserved preferences/backups, live synthetic renderer handoff, failed-upgrade rollback, check mode and uninstall retention all passed. System package queries used the existing test stub with extracted dependency libraries; this is not a fresh-machine pacman installation test.
+- Optional Steamworks hash verification and an actual Steam Workshop query passed.
+- Native scene/video previews and preservation of an unrelated process passed. All four interface themes completed the graphical smoke sequence; the final header icon was visually inspected and its smoke test repeated. SVG/PNG icon inspected at 256 px. Wayland uses the desktop entry icon; an X11 window-manager icon was not independently verified.
+- Full source archive: 12,252 members, safe paths, standalone patch application, and all 109 patched inputs identical to the built worktree.
+- Tracked content and packaged payload checked for personal names/home paths: no matches. History audit checked 520 existing blobs without credential-pattern matches or unexpected private files. Canonical repository URLs and upstream attribution are retained. Installed app/renderer have no development RPATH.
+- Logs, screenshots, fixtures and runtime artifacts remain local and are excluded from Git. No Workshop assets or user settings are packaged.
+- Platform coverage remains Arch Linux x86_64 / Hyprland. Other compositors, Windows/macOS and complete Wallpaper Engine compatibility are not certified. Previous feature tests below remain historical unless explicitly repeated above.
+
 ## 0.29.0 — Interface localization audit — 2026-11-03
 
 - Release build and all 12 CTest checks passed. The catalog now contains 429

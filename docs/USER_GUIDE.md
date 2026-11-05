@@ -1,7 +1,7 @@
 # Wallpaper Lab user guide
 
-For installation, updates, rollback and removal, see the [beta guide](BETA.md).
-The current beta targets Arch Linux x86_64 with Hyprland. Project compatibility
+For installation, updates, rollback and removal, see the [installation guide](BETA.md).
+The current release targets Arch Linux x86_64 with Hyprland. Project compatibility
 depends on the features used by each wallpaper.
 
 ## Library and displays

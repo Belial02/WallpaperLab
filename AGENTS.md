@@ -4,7 +4,6 @@
   English. Keep instructions applicable to any contributor and installation.
 - Wallpaper Lab combines the animated selector derived from Hellpaper with the
   native linux-wallpaperengine renderer in a separate, customizable application.
-  The application name is provisional.
 - Ship one application executable, `wallpaper-lab`. Its `--render` mode links the
   engine library directly; it must not launch upstream application executables.
 - Preserve all four selector layouts and their animation behavior. Distinguish
@@ -24,7 +23,7 @@
   test results, commit intended files and synchronize GitHub within the authorized
   task scope. Documentation-only changes do not require a new application version
   or a rebuilt binary release.
-- Beta releases may include the runtime prepared and verified by the packaging
+- Releases may include the runtime prepared and verified by the packaging
   allowlist. Exclude Workshop assets, user data and raw development builds.
   Clearly document partial features and unsupported platforms.
 - Preserve upstream copyright and license notices. Use generic paths and examples

@@ -1,3 +1,11 @@
+# Version 1.0.0
+
+- First stable numbered release for Arch Linux x86_64; Hyprland remains the tested desktop.
+- Minimal high-contrast landscape icon in the repository, application windows and launcher.
+- Includes all source changes through 0.29: four animated selector layouts, multilingual interface, named monitors, live zoom and optional Caelestia integration.
+- Stable download links and checksum-verifying installer helper; existing settings and rollback behavior retained.
+- Windows/macOS and complete Wallpaper Engine scene compatibility remain unsupported.
+
 # Development history
 
 This public summary records implementation milestones through version 0.29.

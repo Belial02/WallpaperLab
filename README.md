@@ -1,10 +1,12 @@
-# Wallpaper Lab — Open Beta
+<p align="center"><img src="assets/wallpaper-lab.svg" width="96" height="96" alt="Wallpaper Lab icon"></p>
+
+# Wallpaper Lab
 
 Animated wallpapers, a native Steam Workshop browser, and a customizable desktop
 carousel for **Arch Linux x86_64**. One application combines a raylib interface
 with the linux-wallpaperengine renderer. GPL-3.0.
 
-The current source adds named monitor selection, 25–300% live zoom, a compact
+Version 1.0 includes named monitor selection, 25–300% live zoom, a compact
 **power icon**, a single library window, and a selectable monitor for Caelestia
 colours. Arcade includes vivid colours, animated pixel characters and cabinet-style
 buttons. Interface labels and application error summaries follow all 22 supported
@@ -13,14 +15,16 @@ See the [user guide](docs/USER_GUIDE.md#monitor-selection-zoom-and-stopping).
 
 ## Download and install
 
-[**Download the Arch Linux beta installer**](https://github.com/scolapvsta/WallpaperLab/releases/download/v0.24.0-beta.1/Wallpaper-Lab-0.24.0-beta.1-Arch-x86_64.run)
- · [Release notes and checksums](https://github.com/scolapvsta/WallpaperLab/releases/tag/v0.24.0-beta.1)
+[**Download the Arch Linux 1.0 installer**](https://github.com/scolapvsta/WallpaperLab/releases/latest/download/Wallpaper-Lab-Arch-x86_64.run)
+ · [Release notes and checksums](https://github.com/scolapvsta/WallpaperLab/releases/tag/v1.0.0)
 
 Open a terminal in the download folder and run:
 
 ```sh
-bash Wallpaper-Lab-0.24.0-beta.1-Arch-x86_64.run
+bash Wallpaper-Lab-Arch-x86_64.run
 ```
+
+Alternatively, download [Install-Wallpaper-Lab.sh](https://github.com/scolapvsta/WallpaperLab/releases/latest/download/Install-Wallpaper-Lab.sh) and run `sh Install-Wallpaper-Lab.sh`. This small helper downloads the latest stable installer, checks its published SHA-256 checksum and starts the guided setup. Checksums detect corruption; download only from the official repository.
 
 The guided installer verifies its payload, checks Arch dependencies, offers to
 install missing packages with `sudo pacman`, and adds Wallpaper Lab to your app
@@ -49,7 +53,7 @@ your user profile. No compilation, Node.js or npm installation is needed.
   backgrounds, suggested fonts and an optional general font override.
 - Plain switchers with 20 color choices, editable animations, desktop transitions and live mute.
 
-This is an **open beta**. Compatibility depends on the project features used;
+Compatibility depends on the project features used;
 not every Wallpaper Engine scene is supported. Optional Caelestia integration
 requires Caelestia separately. Windows and macOS are not supported by this build.
 Autostart and global shortcuts are configured explicitly inside the app.
@@ -73,16 +77,8 @@ python3 scripts/install.py
 
 The upstream engine build downloads its pinned CEF distribution. System GPU
 libraries remain supplied by Arch and your driver. See [release tooling](docs/RELEASING.md)
-for building the same beta installer, and the release's complete source archive
+for building the same release installer, and the release's complete source archive
 for the app plus pinned submodules.
-
-## Source changes after the current beta installer
-
-Version 0.26 source offers 20 Default palettes (10 light and 10 dark), with the
-same independent **Color palette** selection for the switcher. Switchers use a
-plain style without themed decorations. The main UI retains its four themes.
-The download above remains the published 0.24 beta; build from source for these
-changes.
 
 ## Documentation and credits
 

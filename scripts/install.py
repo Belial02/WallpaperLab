@@ -75,7 +75,7 @@ applications=home/'.local/share/applications';applications.mkdir(parents=True,ex
 (applications/'wallpaper-lab.desktop').write_text(f'''[Desktop Entry]
 Type=Application
 Name=Wallpaper Lab
-Comment=Selettore animato e scene Steam Workshop
+Comment=Animated wallpaper library and Steam Workshop scenes
 Exec="{launcher}"
 Icon=wallpaper-lab
 Terminal=false

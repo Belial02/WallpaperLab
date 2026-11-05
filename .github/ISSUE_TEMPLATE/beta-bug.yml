@@ -1,6 +1,6 @@
-name: Open beta bug report
-description: Report a reproducible Wallpaper Lab beta issue.
-title: "[Beta] "
+name: Bug report
+description: Report a reproducible Wallpaper Lab issue.
+title: "[Bug] "
 body:
   - type: markdown
     attributes:
@@ -9,7 +9,7 @@ body:
     id: version
     attributes:
       label: Wallpaper Lab version
-      placeholder: "0.24.0-beta.1"
+      placeholder: "1.0.0"
     validations:
       required: true
   - type: textarea

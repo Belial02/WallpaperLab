@@ -1,6 +1,6 @@
-# Open beta — Arch Linux x86_64
+# Release 1.0 — Arch Linux x86_64
 
-Version: **0.24.0-beta.1** (application reports 0.24.0).
+Version: **1.0.0** (application reports 1.0.0).
 The package includes the native app, patched renderer, web support and themed
 switchers. Settings, wallpaper libraries, Steam account data and credentials
 are excluded.
@@ -8,12 +8,12 @@ are excluded.
 ## Install
 
 1. Update Arch normally before testing; the build needs glibc >= 2.44.
-2. Download `Wallpaper-Lab-0.24.0-beta.1-Arch-x86_64.run` from the
-   [release](https://github.com/scolapvsta/WallpaperLab/releases/tag/v0.24.0-beta.1).
+2. Download `Wallpaper-Lab-1.0.0-Arch-x86_64.run` from the
+   [release](https://github.com/scolapvsta/WallpaperLab/releases/tag/v1.0.0).
 3. From a terminal in that folder, run:
 
    ```sh
-   bash Wallpaper-Lab-0.24.0-beta.1-Arch-x86_64.run
+   bash Wallpaper-Lab-1.0.0-Arch-x86_64.run
    ```
 
 Run as your desktop user. The installer asks before installing missing Arch
@@ -24,7 +24,7 @@ checked, and no npm/JavaScript code is executed. Internet is needed for missing
 packages and this optional download. This is a third-party Valve component with
 its own terms, not an app source dependency covered by GPL.
 
-Open **Wallpaper Lab (Open Beta)** from your applications menu. The launcher is
+Open **Wallpaper Lab** from your applications menu. The launcher is
 `~/.local/bin/wallpaper-lab`; use that absolute path if `.local/bin` is not on PATH.
 Full desktop operation is verified on Hyprland. The installer warns on other
 desktops; it does not install a compositor or modify its configuration.
@@ -32,7 +32,7 @@ desktops; it does not install a compositor or modify its configuration.
 For Workshop, open Steam, sign in with an account owning Wallpaper Engine, and
 install Wallpaper Engine via Steam. The app detects its library/assets. The
 Steam runtime alone does not grant access to the game or its Workshop content.
-An existing native Steam install is recommended for this beta; Flatpak Steam
+An existing native Steam install is recommended for this release; Flatpak Steam
 catalog paths are detected, but native Steam API connectivity under Flatpak has
 not been certified.
 
@@ -57,14 +57,14 @@ referenced by that launcher. Preferences are not downgraded by this operation.
 
 ```sh
 sha256sum -c SHA256SUMS
-bash Wallpaper-Lab-0.24.0-beta.1-Arch-x86_64.run --check
-bash Wallpaper-Lab-0.24.0-beta.1-Arch-x86_64.run --uninstall
+bash Wallpaper-Lab-1.0.0-Arch-x86_64.run --check
+bash Wallpaper-Lab-1.0.0-Arch-x86_64.run --uninstall
 ```
 
 `--check` verifies the embedded payload, dependencies and CLI, without replacing
 an installation or downloading Steamworks. `--uninstall` stops this app's current
-renderer and removes the beta launcher/menu; it retains preferences, imported
-wallpapers and release backups. It requires a beta installer receipt and will
+renderer and removes the launcher/menu; it retains preferences, imported
+wallpapers and release backups. It requires a installer receipt and will
 not remove an unrelated developer installation.
 
 Other flags: `--no-launch`, `--skip-steam`, `--yes` (accept installer prompts;

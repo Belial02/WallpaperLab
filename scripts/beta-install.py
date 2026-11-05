@@ -48,7 +48,7 @@ def steam_runtime(stage,config):
  (stage/'licenses/STEAMWORKS.txt').write_text(config['notice']+'\n'+config['terms']+'\nSource: '+config['url']+'\n')
 
 def prerequisite_check(deps,install=False,yes=False):
- if platform.system()!='Linux' or platform.machine()!='x86_64':raise RuntimeError('This beta requires Arch Linux x86_64.')
+ if platform.system()!='Linux' or platform.machine()!='x86_64':raise RuntimeError('This release requires Arch Linux x86_64.')
  osrelease=platform.freedesktop_os_release()
  if osrelease.get('ID')!='arch' and 'arch'not in osrelease.get('ID_LIKE','').split():raise RuntimeError('This installer targets Arch Linux and Arch derivatives only.')
  required=tuple(map(int,deps['minimum_glibc'].split('.')))
@@ -76,7 +76,7 @@ def validate_runtime(stage,version):
 
 def uninstall(base,launcher,data,yes):
  receipt=base/'installation.json'
- if not receipt.is_file():raise RuntimeError('No beta installer receipt found. Existing developer installs are left untouched.')
+ if not receipt.is_file():raise RuntimeError('No installer receipt found. Existing developer installs are left untouched.')
  state=json.loads(receipt.read_text());runtime=P(state['runtime'])
  if runtime.parent!=base/'releases':raise RuntimeError('Invalid installation receipt.')
  if not ask('Remove Wallpaper Lab? Your wallpapers and preferences will be kept.',yes):return
@@ -141,7 +141,7 @@ def install(z,m,args):
      if f.exists():shutil.copy2(f,backups/f.name)
     desktop_exec=str(launcher).replace('\\','\\\\').replace('"','\\"').replace('`','\\`').replace('$','\\$').replace('%','%%')
     resources_written=True
-    atomic(desktop,'[Desktop Entry]\nType=Application\nName=Wallpaper Lab (Open Beta)\nComment=Animated wallpapers and themed carousel\nExec="'+desktop_exec+'"\nIcon=wallpaper-lab\nTerminal=false\nCategories=Settings;DesktopSettings;\nStartupWMClass=wallpaper-lab\n')
+    atomic(desktop,'[Desktop Entry]\nType=Application\nName=Wallpaper Lab\nComment=Animated wallpapers and themed carousel\nExec="'+desktop_exec+'"\nIcon=wallpaper-lab\nTerminal=false\nCategories=Settings;DesktopSettings;\nStartupWMClass=wallpaper-lab\n')
     atomic(icon,z.read('wallpaper-lab.svg').decode())
     atomic(base/'installation.json',json.dumps({'version':m['release'],'runtime':str(runtime),'backup':str(backups)},indent=2)+'\n')
     # Stop only renderers whose PID, start time, executable and --render still match.
@@ -170,8 +170,8 @@ def install(z,m,args):
     with (log_dir/'beta-launch.log').open('a') as log:subprocess.Popen([str(launcher)],stdout=log,stderr=log,start_new_session=True)
 
 def main():
- parser=argparse.ArgumentParser(description='Wallpaper Lab Open Beta — Arch Linux x86_64 installer')
- for flag,help_ in [('yes','Accept installer prompts (pacman may still request authentication/confirmation).'),('check','Verify payload, dependencies and CLI without installing.'),('no-launch','Do not open the UI after installation.'),('skip-steam','Do not download the optional Valve Workshop runtime.'),('uninstall','Remove beta launcher/menu; retain data and runtime backups.')]:parser.add_argument('--'+flag,action='store_true',help=help_)
+ parser=argparse.ArgumentParser(description='Wallpaper Lab — Arch Linux x86_64 installer')
+ for flag,help_ in [('yes','Accept installer prompts (pacman may still request authentication/confirmation).'),('check','Verify payload, dependencies and CLI without installing.'),('no-launch','Do not open the UI after installation.'),('skip-steam','Do not download the optional Valve Workshop runtime.'),('uninstall','Remove launcher/menu; retain data and runtime backups.')]:parser.add_argument('--'+flag,action='store_true',help=help_)
  args=parser.parse_args(sys.argv[2:])
  if os.geteuid()==0:raise RuntimeError('Run as your desktop user, without sudo. Only dependency installation uses sudo.')
  with zipfile.ZipFile(sys.argv[1]) as z:

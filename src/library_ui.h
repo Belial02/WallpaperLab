@@ -417,7 +417,7 @@ static void Header(int sw,int top,int count){
     }else if(PixelTheme()){ArcadePac(46,39,2,false,lab_option("reduce_motion")?0:GetTime());ArcadeStar(69,25,1,AppTheme.border);}else if(CyberTheme()){
         for(int x=0;x<sw;x+=8)DrawRectangle(x,0,3,2,Fade(AppTheme.border,.45f));
 
-    }else Icon(UI_LOGO,(Vector2){44,40},AppTheme.text,false);
+    }else DrawTextureEx(appIconTexture,(Vector2){26,22},0,36.0f/appIconTexture.width,WHITE);
     if(CyberTheme()){
         DrawRectangle(24,22,3,31,AppTheme.border);ShapedText* brand=ShapeFamily("WALLPAPER LAB",22,lab_option("general_font_enabled")?lab_font_family():"Oxanium");DrawTexture(brand->texture,39,20,AppTheme.text);
     }else UiText("Wallpaper Lab",72,22,25,AppTheme.text);
@@ -698,7 +698,7 @@ static void CommitLibraryScan(pthread_t* loaders){
 int selector_main(int argc,char**argv){
     LoadDefaultConfig();ParseConfigFile();g_base_thumb_size=420;g_max_threads=4;g_max_fps=90;
     SetTraceLogLevel(LOG_WARNING);LoadWallpapers(NULL);
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE|FLAG_MSAA_4X_HINT|FLAG_WINDOW_TRANSPARENT|(getenv("WALLPAPER_LAB_UI_HIDDEN")?FLAG_WINDOW_HIDDEN:0));InitWindow(1440,900,"Wallpaper Lab");SetWindowMinSize(1000,720);SetExitKey(KEY_NULL);SetTargetFPS(g_max_fps);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE|FLAG_MSAA_4X_HINT|FLAG_WINDOW_TRANSPARENT|(getenv("WALLPAPER_LAB_UI_HIDDEN")?FLAG_WINDOW_HIDDEN:0));InitWindow(1440,900,"Wallpaper Lab");SetAppIcon();SetWindowMinSize(1000,720);SetExitKey(KEY_NULL);SetTargetFPS(g_max_fps);
     ReloadUiFonts();InitBackdrop();InitIconAtlas();
     selected_index=lab_current();detailOpen=false;
     if(argc>1&&!strcmp(argv[1],"--display-settings")){settingsOpen=true;settingsTab=0;}
@@ -814,5 +814,5 @@ int selector_main(int argc,char**argv){
     WorkshopCleanup();if(uiCanvas.id)UnloadRenderTexture(uiCanvas);if(transitionCanvas.id)UnloadRenderTexture(transitionCanvas);if(transitionShader.id)UnloadShader(transitionShader);for(int n=0;n<1024;n++){if(shapedCache[n].texture.id)UnloadTexture(shapedCache[n].texture);free(shapedCache[n].text);}if(backdropShader.id)UnloadShader(backdropShader);if(liveTexture.id)UnloadTexture(liveTexture);lab_shutdown();atomic_store(&loader_running,false);for(int n=0;n<4;n++)pthread_join(loaders[n],NULL);
     for(int i=0;i<wallpaper_count;i++){if(atomic_load(&wallpapers[i].loaded))UnloadTexture(wallpapers[i].texture);if(atomic_load(&imagePending[i]))UnloadImage(pendingImages[i]);free(wallpapers[i].path);free(wallpapers[i].filename);}
     for(int i=0;i<96;i++)if(fontPreview[i].texture.id&&fontPreview[i].texture.id!=GetFontDefault().texture.id)UnloadFont(fontPreview[i]);
-    if(uiFont.texture.id!=GetFontDefault().texture.id)UnloadFont(uiFont);if(brandFont.texture.id!=GetFontDefault().texture.id)UnloadFont(brandFont);if(buttonFont.texture.id!=GetFontDefault().texture.id)UnloadFont(buttonFont);if(fallbackFont.texture.id!=GetFontDefault().texture.id)UnloadFont(fallbackFont);if(iconAtlasTarget.id)UnloadRenderTexture(iconAtlasTarget);if(cyberCity.id)UnloadRenderTexture(cyberCity);if(appBackgroundTexture.id)UnloadTexture(appBackgroundTexture);if(backgroundPreview.id)UnloadRenderTexture(backgroundPreview);CloseWindow();return smokeApplyStarted&&(!smokeApplySucceeded||smokeFramesAfterApply<30)?1:0;
+    if(uiFont.texture.id!=GetFontDefault().texture.id)UnloadFont(uiFont);if(brandFont.texture.id!=GetFontDefault().texture.id)UnloadFont(brandFont);if(buttonFont.texture.id!=GetFontDefault().texture.id)UnloadFont(buttonFont);if(fallbackFont.texture.id!=GetFontDefault().texture.id)UnloadFont(fallbackFont);if(iconAtlasTarget.id)UnloadRenderTexture(iconAtlasTarget);if(cyberCity.id)UnloadRenderTexture(cyberCity);if(appBackgroundTexture.id)UnloadTexture(appBackgroundTexture);if(backgroundPreview.id)UnloadRenderTexture(backgroundPreview);UnloadTexture(appIconTexture);CloseWindow();return smokeApplyStarted&&(!smokeApplySucceeded||smokeFramesAfterApply<30)?1:0;
 }

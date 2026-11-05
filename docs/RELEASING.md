@@ -1,4 +1,4 @@
-# Publishing a beta
+# Publishing a release
 
 Keep the repository public. Never publish user library assets, settings,
 credentials, raw development runtimes or logs. Documentation-only changes can be
@@ -28,7 +28,7 @@ existing release artifacts.
    and blobs for credentials and unexpected private media/configuration. Do not
    assume .gitignore retroactively removes history. No force-push is needed.
 6. Check `git diff --check`, stage only intended files, commit and push. Create
-   a beta prerelease and publish the .run, SHA256SUMS and full source archive
+   a stable release when the manifest channel is `stable`, otherwise a prerelease and publish the .run, SHA256SUMS and full source archive
    (including initialized pinned submodules, not GitHub's root-only autoarchive).
    Use `scripts/package-source.py` for that archive. Audit source archive paths.
 7. Package the final commit so the binary manifest identifies its source. Attach
@@ -40,3 +40,12 @@ existing release artifacts.
 The initial beta targets up-to-date Arch x86_64 with Hyprland. Future package
 manager/SONAME changes can require a rebuild. Do not advertise Windows/macOS or
 all Linux compositors as supported by this artifact.
+
+For stable releases also attach the installer as `Wallpaper-Lab-Arch-x86_64.run`
+and `scripts/download-install.sh` as `Install-Wallpaper-Lab.sh`. Include both
+aliases in SHA256SUMS. The README latest/download links then track the release.
+
+The icon master is `assets/wallpaper-lab.svg`. Run
+`python3 scripts/generate-icon.py` with librsvg installed to regenerate the PNG
+and embedded window icon. Wayland launchers use the desktop entry SVG; window
+icons are also set where the window system supports them.

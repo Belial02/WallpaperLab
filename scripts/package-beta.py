@@ -10,7 +10,7 @@ def run(*args): subprocess.run([str(a) for a in args], check=True)
 def digest(path): return hashlib.file_digest(path.open('rb'), 'sha256').hexdigest()
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=pathlib.Path,default=ROOT/'local/releases');p.add_argument('--app-build',type=pathlib.Path,default=ROOT/'build');p.add_argument('--engine-build',type=pathlib.Path,default=ROOT/'build-engine');a=p.parse_args()
- manifest=json.loads((ROOT/'build-manifest.json').read_text());version=manifest['version'];tag=f'{version}-beta.1';a.output.mkdir(parents=True,exist_ok=True)
+ manifest=json.loads((ROOT/'build-manifest.json').read_text());version=manifest['version'];tag=version if manifest.get('channel')=='stable' else f'{version}-beta.1';a.output.mkdir(parents=True,exist_ok=True)
  with tempfile.TemporaryDirectory(prefix='wallpaper-lab-package-') as tmp:
   stage=pathlib.Path(tmp);runtime=stage/'runtime'
   run('cmake','--install',a.app_build,'--prefix',runtime,'--component','app')

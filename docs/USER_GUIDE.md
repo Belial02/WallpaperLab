@@ -4,6 +4,51 @@ For installation, updates, rollback and removal, see the [installation guide](BE
 The current release targets Arch Linux x86_64 with Hyprland. Project compatibility
 depends on the features used by each wallpaper.
 
+## Local image backend: awww
+
+In builds with awww support, open **Settings → Playback → Local image backend**
+and choose **awww**. Install awww separately and start `awww-daemon` through your
+normal session setup. Wallpaper Lab uses the existing daemon. Imported images
+and animated GIFs go to awww; videos and Workshop scene/web projects continue
+using the native renderer. Preview windows still use the native renderer.
+
+**Import from Caelestia CLI** reads `~/.config/caelestia/cli.json` (or its XDG
+equivalent), backs up Wallpaper Lab's settings, and imports a wallpaper hook
+beginning with `awww img "$WALLPAPER_PATH"`. It recognizes transition type, step,
+duration, FPS, angle, named origin, and `--invert-y`, including the Hyprland
+cursor expression `$(hyprctl cursorpos | tr -d ' ')`. Unsupported command forms
+fail without changing settings. The CLI configuration remains unchanged.
+
+A shell command following `&&` is saved as the **Imported post-hook**. Importing
+enables that command; review its displayed text and use the toggle to disable it.
+It runs after a successful awww application with `WALLPAPER_PATH` set to the
+actual imported media file. This can retain an existing cursor-theme rebuild.
+Output and failures are recorded in the app's XDG state directory as
+`post-hook.log` and `post-hook-status.json`. A failed post-hook keeps the wallpaper
+active and displays a notice in Playback settings. This does not invoke the full
+Caelestia wallpaper command; the app's existing optional palette integration
+remains separate.
+
+Under **Carousel → Transition**, select any awww effect, then use the customize
+button for duration (milliseconds), step, FPS, origin and Y inversion. Wipe/wave
+also expose the angle. These preferences are separate from native transitions
+and from the switcher's own animation. Native shader previews are disabled for
+awww; apply an image to see the actual effect. Reduced motion selects `none`.
+
+Use one monitor or mirror mode. Multi-monitor panorama is rejected before
+launching because awww does not implement Wallpaper Lab's combined canvas.
+Native image adjustments, positioning, zoom and playback controls are hidden for
+awww images; awww uses its default crop scaling. Cursor origin uses the same
+Hyprland coordinates as the imported CLI expression. Mixed-DPI cursor alignment
+has not been independently certified.
+
+Carousel selection, saved monitor assignments and restore use the selected
+backend. Stop clears only outputs still displaying that application's awww
+image, leaves the shared daemon running, and verifies renderer ownership before
+signaling a process. A failed awww launch preserves the previous renderer.
+`wallpaper-lab --import-awww` performs the same import as the GUI, and `--plan ID`
+prints the actual awww argument list for an imported image.
+
 ## Library and displays
 
 Click a wallpaper card to apply it and open its live inspector. Closing the UI

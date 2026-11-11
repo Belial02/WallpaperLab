@@ -41,6 +41,12 @@ your user profile. No compilation, Node.js or npm installation is needed.
 - Local image/video imports work without Steam. A file picker, FFmpeg and fonts
   are checked by the installer. Your wallpaper library is never included.
 
+The source tree also supports **awww for local images and animated GIFs**. Choose
+it under **Settings → Playback**, or import a supported `awww` wallpaper hook
+from Caelestia CLI. Transition controls then use awww's effects, duration, step,
+FPS, origin and Y inversion. Videos and Workshop projects keep the native renderer.
+This addition is a source/custom-build feature; the linked 1.0 installer predates it.
+
 [Installation, updating, removal and troubleshooting →](docs/BETA.md)
 
 ## What is included

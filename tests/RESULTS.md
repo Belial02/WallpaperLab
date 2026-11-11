@@ -6,6 +6,38 @@ results and limitations while omitting workstation session notes and local
 wallpaper choices. Logs, screenshots, generated fixtures and library assets stay
 outside Git under `local/` or isolated XDG directories.
 
+## Custom awww backend — 2026-11-11
+
+- App rebuilt against the pinned source headers and the installed 1.0 engine/CEF
+  libraries; the engine itself was not rebuilt or changed for this feature.
+- All **15 CTest checks passed**, including catalog, preferences, parser,
+  localization, installer/download checks, the new awww argument/import test,
+  and the isolated controller lifecycle test.
+- Lifecycle checks used a fake awww daemon and real application supervisor
+  processes: CLI import and backups, actual media-path arguments, cursor
+  coordinates, image handoff, carousel advance, saved assignment restore, failed launch retaining its
+  predecessor, post-hook failure retaining its wallpaper, explicit Stop, and
+  preservation of an unrelated process/image all passed. An external wallpaper
+  change ended the app's supervisor without clearing the new image. Unsupported
+  imports left settings unchanged. This is not a real multi-monitor certification.
+- Hyprland/Wayland GUI checks with virtual pointer input passed: the backend
+  dropdown, awww transition customization, origin/Y controls, and persisted
+  144-FPS slider value. Playback and transition screenshots were visually checked.
+- Pango/Cairo checked all 438 messages across 22 languages: no missing glyphs.
+  Translation coverage and format checks passed. Technical awww effect/origin
+  names remain literal command values.
+- Real awww image application on one Hyprland output passed using outer, step 2,
+  2-second duration, 144 FPS, cursor origin and Y inversion. The imported trailing
+  hook also completed successfully. Native image/video preview windows remained
+  functional, and video planning still selected the embedded renderer.
+- Installed a separate custom runtime with the original launcher, preferences
+  and runtime metadata backed up. The active native image was handed over to
+  awww; the original Caelestia CLI configuration remained byte-identical.
+- awww daemon startup remains the session's responsibility. Panorama is rejected
+  for multiple outputs; mixed-DPI cursor alignment and real multi-output awww
+  handoff were not verified. Native image transforms are not implemented by the
+  awww backend. The published 1.0 installer was not rebuilt or replaced.
+
 The verified desktop environment is Arch Linux x86_64 with Hyprland and a
 two-output setup. Readiness, short survival, shader output, compositor pixels and
 UI interaction are different checks; a pass in one is not certification of all

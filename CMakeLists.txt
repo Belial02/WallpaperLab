@@ -104,3 +104,8 @@ target_include_directories(theme-art-graphics-test PRIVATE src)
 target_link_libraries(theme-art-graphics-test PRIVATE raylib m)
 
 add_test(NAME download-helper COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/download_helper_test.py")
+
+add_executable(awww-backend-test tests/awww_backend_test.cpp src/catalog.cpp)
+target_include_directories(awww-backend-test PRIVATE src vendor/engine/src/External/json/include)
+add_test(NAME awww-backend COMMAND awww-backend-test)
+add_test(NAME awww-lifecycle COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/awww_lifecycle_integration.py" --app $<TARGET_FILE:wallpaper-lab>)

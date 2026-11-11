@@ -6,6 +6,25 @@ results and limitations while omitting workstation session notes and local
 wallpaper choices. Logs, screenshots, generated fixtures and library assets stay
 outside Git under `local/` or isolated XDG directories.
 
+## Editable transition timing — 2026-11-11
+
+- awww step is limited to 1–100 throughout preferences, hook import and backend
+  arguments. Duration remains limited to 0.1–10 seconds and is now displayed in
+  seconds rather than milliseconds. Existing oversized settings are bounded.
+- Inline and customization timing controls accept direct numeric input and
+  provide vector-drawn up/down buttons. Buttons change step by 1 or duration by
+  1 second; fractional durations are preserved. Enter/outside click commits,
+  Escape cancels only the field, and empty/nonfinite/malformed input is discarded.
+- All **16 automated checks passed**, including numeric parsing, decimal comma,
+  upper/lower bounds, invalid/nonfinite input and backend argument caps.
+- Explicit Hyprland GUI checks passed for both control locations: typing integer
+  and fractional values, button changes, keyboard Up, maximum disabled buttons,
+  slider endpoints, click-away commit, invalid/empty input preservation and Esc
+  keeping the settings/customization dialog open. Native screenshots were
+  inspected; arrows use geometry rather than a font glyph.
+- Installed the updated runtime with backups. Verified both timing bounds while
+  preserving the wallpaper, shortcut configuration and carousel preference.
+
 ## Optional persistent carousel — 2026-11-11
 
 - Added **Keep carousel open** beside the carousel shortcut settings. It defaults

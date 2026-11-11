@@ -23,6 +23,8 @@ int main(){
   require(args.at(2)==fs::canonical(root/"project/media $(touch escaped).png").string()&&args.at(4)=="HDMI-A-1","media/output argument changed");
   require(!fs::exists("escaped"),"image filename executed");
   prefs["reduce_motion"]=true;args=awwwArgs(image,prefs,{"DP-1"});require(args.at(6)=="none","reduced motion ignored");
+  prefs["awww_step"]=255;prefs["awww_duration"]=99999;args=awwwArgs(image,prefs,{"DP-1"});
+  require(args.at(8)=="100"&&std::stod(args.at(10))==10,"backend timing caps ignored");
   prefs["mode"]="span";rejects([&]{awwwArgs(image,prefs,{"DP-1","DP-2"});});
   prefs["mode"]="mirror";args=awwwArgs(image,prefs,{"DP-1","DP-2"});require(args.at(4)=="DP-1,DP-2","mirror outputs missing");
   image.type="video";require(!usesAwww(image,prefs),"video sent to awww");image.type="image";image.origin="steam";require(!usesAwww(image,prefs),"Workshop image sent to awww");

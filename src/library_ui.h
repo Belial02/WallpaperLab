@@ -303,7 +303,7 @@ static void SettingsBody(Rectangle area){
     }else if(settingsTab==2){
         TransitionControls(x,&y,w);y+=20;
         if(lab_option("wallpaper_backend")==1){
-            SettingSlider(129,x,&y,w,lab_tr("Passo della transizione"),"awww_step",1,255,"");
+            SettingSlider(129,x,&y,w,lab_tr("Passo della transizione"),"awww_step",1,100,"");
             SettingSlider(130,x,&y,w,lab_tr("Durata della transizione"),"awww_duration",100,10000," ms");y+=12;
         }
         UiText(lab_tr("Shortcut del carousel"),x,y,18,AppTheme.text);y+=30;ShortcutInline(x,y,w);y+=50;
@@ -678,6 +678,7 @@ static void CustomizationGeometry(FILE* f){
     fprintf(f,",\"stop_and_quit\":[%.1f,%.1f],\"power_rect\":[%.1f,%.1f,%.1f,%.1f],\"header_decoration\":[%.1f,%.1f,%.1f,%.1f]",headerPower.x+headerPower.width/2,headerPower.y+headerPower.height/2,headerPower.x,headerPower.y,headerPower.width,headerPower.height,headerDecoration.x,headerDecoration.y,headerDecoration.width,headerDecoration.height);
     fprintf(f,",\"display_cards\":");GeometryCenters(f,displayCards,lab_monitor_count());fprintf(f,",\"display_selected\":%d,\"screen\":%d,\"animation_controls\":",displaySelected,lab_screen());Rectangle animations[]={switcherEye,transitionEye,switcherCustomize,transitionCustomize};GeometryCenters(f,animations,4);
     fprintf(f,",\"number_tracks\":{");bool firstNumber=true;for(int id=0;id<160;id++)if(numberTracks[id].width){Rectangle r=numberTracks[id];fprintf(f,"%s\"%d\":[%.1f,%.1f,%.1f]",firstNumber?"":",",id,r.x,r.y,r.width);firstNumber=false;}fprintf(f,"}");
+    fprintf(f,",\"number_fields\":{");bool firstField=true;for(int id=0;id<160;id++)if(numberFields[id].width){Rectangle r=numberFields[id],up=numberUp[id],down=numberDown[id];fprintf(f,"%s\"%d\":{\"value\":[%.1f,%.1f],\"up\":[%.1f,%.1f],\"down\":[%.1f,%.1f]}",firstField?"":",",id,r.x+r.width/2,r.y+r.height/2,up.x+up.width/2,up.y+up.height/2,down.x+down.width/2,down.y+down.height/2);firstField=false;}fprintf(f,"}");
     fprintf(f,",\"display_save\":[%.1f,%.1f]",displaySaveButton.x+displaySaveButton.width/2,displaySaveButton.y+displaySaveButton.height/2);
     fprintf(f,",\"display_control\":[%.1f,%.1f]",headerDisplay.x+headerDisplay.width/2,headerDisplay.y+headerDisplay.height/2);
     fprintf(f,",\"language_control\":[%.1f,%.1f]",languageControl.x+languageControl.width/2,languageControl.y+languageControl.height/2);
@@ -749,7 +750,7 @@ int selector_main(int argc,char**argv){
         int removed=lab_deleted();if(removed>=0){deleted[removed]=true;if(selected_index==removed){selected_index=lab_current();detailOpen=selected_index>=0;}snprintf(notice,sizeof(notice),"Sfondo spostato nel cestino del sistema.");}
         if(completed){applying=false;if(completed>0&&removed<0)snprintf(notice,sizeof(notice),"%s",completed==1?"Sfondo applicato":"Scena live aperta in una finestra separata");}
         refreshClock+=dt;if(refreshClock>1&&!applying){lab_refresh();refreshClock=0;}
-        bool escape=IsKeyPressed(KEY_ESCAPE);
+        bool escape=IsKeyPressed(KEY_ESCAPE);if(UpdateSettingNumber())escape=false;
         if(lab_switcher_preview_active()&&(escape||IsMouseButtonPressed(MOUSE_BUTTON_LEFT))){lab_cancel_switcher_preview();escape=false;}
         if(escape&&(transitionPreview||switcherPreview||animationCustomize)){if(choiceOpen>=0)choiceOpen=-1;else{transitionPreview=switcherPreview=false;animationCustomize=0;}escape=false;}
         if(escape){if(choiceOpen>=0)choiceOpen=-1;else if(creatorEdit>=0)creatorEdit=-1;else if(wsAuthorEditing)wsAuthorEditing=false;else if(placementAxis>=0)placementAxis=-1;else if(recordingKey)SetRecording(false);else if(deleteIndex>=0)deleteIndex=-1;else if(displayPopup){displayPopup=false;displayDragging=-1;}else if(settingsOpen&&choiceOpen>=0)choiceOpen=-1;else if(settingsOpen)settingsOpen=false;else if(isSearching)isSearching=false;else if(detailOpen)detailOpen=false;else if(page==3&&wsSelected>=0)wsSelected=-1;else if(page!=0)ChangePage(0);}

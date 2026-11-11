@@ -38,8 +38,12 @@ Wallpaper Lab tint or forced fidelity preset for these images.
 
 Under **Settings → Carousel → Transition**, select any awww effect. **Transition
 step** and **Transition duration** sliders appear directly below the style
-selector. Duration uses 0.1-second increments, is displayed in milliseconds, and
-is passed to awww in seconds.
+selector. Step ranges from **1 to 100**, and duration from **0.1 to 10 seconds**.
+Click either number to type a value; Enter or clicking elsewhere saves it, and
+Esc cancels the edit. The **↑ / ↓** buttons add or subtract one step or one
+second from the current value. Duration supports fractional seconds such as
+`2.25`; dragging its slider uses 0.1-second increments. Limits also apply to
+typed values and backend arguments.
 The customize button also exposes duration, step, FPS, origin and Y inversion.
 Wipe/wave also expose the angle. These preferences are separate from native transitions
 and from the switcher's own animation. Native shader previews are disabled for

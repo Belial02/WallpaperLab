@@ -32,7 +32,7 @@ inline std::vector<std::string> awwwArgs(const Item& item,const json& prefs,cons
   try{auto cursor=json::parse(result.at(0));position=std::to_string(cursor.at("x").get<int>())+","+std::to_string(cursor.at("y").get<int>());}
   catch(...){throw std::runtime_error("Cannot read Hyprland cursor position for awww");}
  }
- std::vector<std::string> args={"awww","img",awwwImage(item).string(),"--outputs",outputs,"--transition-type",awwwTransitions[std::clamp(prefs.value("awww_transition",12),0,13)],"--transition-step",std::to_string(std::clamp(prefs.value("awww_step",2),1,255)),"--transition-duration",std::to_string(std::clamp(prefs.value("awww_duration",2000),100,10000)/1000.),"--transition-fps",std::to_string(std::clamp(prefs.value("awww_fps",144),1,240)),"--transition-pos",position,"--transition-angle",std::to_string(std::clamp(prefs.value("awww_angle",45),0,360))};
+ std::vector<std::string> args={"awww","img",awwwImage(item).string(),"--outputs",outputs,"--transition-type",awwwTransitions[std::clamp(prefs.value("awww_transition",12),0,13)],"--transition-step",std::to_string(std::clamp(prefs.value("awww_step",2),1,100)),"--transition-duration",std::to_string(std::clamp(prefs.value("awww_duration",2000),100,10000)/1000.),"--transition-fps",std::to_string(std::clamp(prefs.value("awww_fps",144),1,240)),"--transition-pos",position,"--transition-angle",std::to_string(std::clamp(prefs.value("awww_angle",45),0,360))};
  if(prefs.value("awww_invert_y",true))args.push_back("--invert-y");
  if(prefs.value("reduce_motion",false)){auto effect=std::find(args.begin(),args.end(),"--transition-type");*(effect+1)="none";}
  return args;
@@ -55,7 +55,7 @@ inline json importAwwwHook(const std::string& hook){
    if(!std::regex_match(value,std::regex(R"([0-9]+(\.[0-9]+)?)")))throw std::runtime_error("Unsupported awww option in Caelestia hook");
    if(key=="--transition-duration"){double seconds=std::stod(value);if(seconds<.1||seconds>10)throw std::runtime_error("Unsupported awww option in Caelestia hook");prefs["awww_duration"]=int(std::round(seconds*1000));}
    else{int number=std::stoi(value);if(value.find('.')!=std::string::npos)throw std::runtime_error("Unsupported awww option in Caelestia hook");
-    if(key=="--transition-step"&&number>=1&&number<=255)prefs["awww_step"]=number;
+    if(key=="--transition-step"&&number>=1&&number<=255)prefs["awww_step"]=std::min(number,100);
     else if(key=="--transition-fps"&&number>=1&&number<=240)prefs["awww_fps"]=number;
     else if(key=="--transition-angle"&&number>=0&&number<=360)prefs["awww_angle"]=number;
     else throw std::runtime_error("Unsupported awww option in Caelestia hook");

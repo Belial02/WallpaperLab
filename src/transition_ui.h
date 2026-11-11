@@ -33,7 +33,7 @@ static void AnimationCustomization(void){
  if(lab_option("carousel_layout")==3){SettingSlider(105,x,&y,w,lab_tr("Velocità dell’onda"),"wave_speed",0,300,"%");SettingSlider(106,x,&y,w,lab_tr("Ampiezza dell’onda"),"wave_height",0,40," px");}
  }else if(awww){
  SettingSlider(125,x,&y,w,lab_tr("Durata della transizione"),"awww_duration",100,10000," ms");
- SettingSlider(126,x,&y,w,lab_tr("Passo della transizione"),"awww_step",1,255,"");
+ SettingSlider(126,x,&y,w,lab_tr("Passo della transizione"),"awww_step",1,100,"");
  SettingSlider(127,x,&y,w,lab_tr("Fotogrammi al secondo"),"awww_fps",1,240," FPS");
  const char* positions[]={"cursor","center","top","left","right","bottom","top-left","top-right","bottom-left","bottom-right"};int at=lab_option("awww_position"),v=Choice(83,x,&y,w,lab_tr("Posizione"),positions,10,at);if(v!=at)lab_set_option("awww_position",v);
  at=lab_option("awww_invert_y");v=BoolChoice(84,x,&y,w,lab_tr("Inverti asse Y"),at);if(v!=at)lab_set_option("awww_invert_y",v);

@@ -70,6 +70,8 @@ json loadSettings() {
     for(auto [key,value]:animationDefaults)if(!prefs.contains(key))prefs[key]=value;
     const std::pair<const char*,int> backendDefaults[]={{"wallpaper_backend",0},{"awww_transition",12},{"awww_step",2},{"awww_duration",2000},{"awww_fps",144},{"awww_position",0},{"awww_angle",45}};
     for(auto [key,value]:backendDefaults)if(!prefs.contains(key))prefs[key]=value;
+    prefs["awww_step"]=std::clamp(prefs.value("awww_step",2),1,100);
+    prefs["awww_duration"]=std::clamp(prefs.value("awww_duration",2000),100,10000);
     if(!prefs.contains("awww_invert_y"))prefs["awww_invert_y"]=true;
     if(!prefs.contains("wallpaper_post_hook_enabled"))prefs["wallpaper_post_hook_enabled"]=false;
     if(!prefs.contains("carousel_persistent"))prefs["carousel_persistent"]=false;

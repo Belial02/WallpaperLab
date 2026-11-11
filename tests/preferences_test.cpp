@@ -2,6 +2,7 @@
 #include "theme_catalog.h"
 #include "shortcuts.hpp"
 #include "audio_policy.hpp"
+#include "setting_number.h"
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -13,6 +14,14 @@ int main(){
     auto root=fs::current_path()/("wallpaper-lab-preferences-"+std::to_string(getpid()));
     setenv("XDG_CONFIG_HOME",(root/"config").c_str(),1);setenv("XDG_STATE_HOME",(root/"state").c_str(),1);
     try {
+        double number=0;
+        require(LabParseSettingNumber("2.25",.1,10,&number)&&number==2.25,"decimal seconds rejected");
+        require(LabParseSettingNumber(" 2,5 ",.1,10,&number)&&number==2.5,"decimal comma rejected");
+        require(LabParseSettingNumber("99",.1,10,&number)&&number==10,"duration max ignored");
+        require(LabParseSettingNumber("-1",.1,10,&number)&&number==.1,"duration minimum ignored");
+        for(auto text:{""," ","2 seconds","2.3.4","nan","inf","1e999"})require(!LabParseSettingNumber(text,.1,10,&number),"invalid numeric input accepted");
+        writeJson(configDir()/"settings.json",{{"awww_step",255},{"awww_duration",90000}});
+        require(loadSettings()["awww_step"]==100&&loadSettings()["awww_duration"]==10000,"old timing values exceeded caps");
         require(wallpaperPosition(json{{"fixture",{{"position",{{"x",0},{"y",0},{"zoom",0.5}}}}}},"fixture")["zoom"]==0.5,"saved zoom out lost");
         for(int design=0;design<LAB_DESIGN_COUNT;design++)for(int palette=0;palette<LAB_THEME_COUNT;palette++){
             writeJson(configDir()/"settings.json",{{"theme_scoped_v3",true},{"ui_design",design},{"ui_theme",palette},{"light_theme",false}});

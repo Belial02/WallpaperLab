@@ -640,7 +640,7 @@ int lab_set_option(const char* key,int value){
     if(auto range=animationRanges.find(k);range!=animationRanges.end()){int ok=savePreference(k,std::clamp(value,range->second.first,range->second.second));if(ok&&k.starts_with("caelestia_")&&settings.value("caelestia_enabled",false)){integrationDirty=true;if(!integrationJob.valid())startIntegrationJob();}return ok;}
     if(k=="page_size")return savePreference(k,value<=50?50:value<=100?100:200);
     if(k=="transition_type")return savePreference(k,std::clamp(value,0,8));
-    const std::map<std::string,std::pair<int,int>> backendRanges={{"wallpaper_backend",{0,1}},{"awww_transition",{0,13}},{"awww_step",{1,255}},{"awww_duration",{100,10000}},{"awww_fps",{1,240}},{"awww_position",{0,9}},{"awww_angle",{0,360}}};
+    const std::map<std::string,std::pair<int,int>> backendRanges={{"wallpaper_backend",{0,1}},{"awww_transition",{0,13}},{"awww_step",{1,100}},{"awww_duration",{100,10000}},{"awww_fps",{1,240}},{"awww_position",{0,9}},{"awww_angle",{0,360}}};
     if(auto range=backendRanges.find(k);range!=backendRanges.end())return savePreference(k,std::clamp(value,range->second.first,range->second.second));
     if(k=="awww_invert_y"||k=="wallpaper_post_hook_enabled"||k=="carousel_persistent")return savePreference(k,bool(value));
     if(k=="fullscreen_policy")return savePreference(k,std::clamp(value,0,2));

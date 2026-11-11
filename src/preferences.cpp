@@ -72,6 +72,7 @@ json loadSettings() {
     for(auto [key,value]:backendDefaults)if(!prefs.contains(key))prefs[key]=value;
     if(!prefs.contains("awww_invert_y"))prefs["awww_invert_y"]=true;
     if(!prefs.contains("wallpaper_post_hook_enabled"))prefs["wallpaper_post_hook_enabled"]=false;
+    if(!prefs.contains("carousel_persistent"))prefs["carousel_persistent"]=false;
     int pageSize=prefs.value("page_size",100);prefs["page_size"]=pageSize<=50?50:pageSize<=100?100:200;
     return prefs;
 }

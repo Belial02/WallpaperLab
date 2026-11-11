@@ -165,7 +165,15 @@ allow click confirmation without moving their strips on hover.
 The shortcut is configured explicitly in the app. On Hyprland, activation checks
 conflicts, backs up configuration and manages an app-specific include/binding.
 Disabling removes the managed binding; the reusable include remains. Releasing
-a modifier confirms the selection; Esc cancels. The app respects shortcut
+a modifier confirms the selection by default; Esc cancels. Beside the shortcut
+settings, **Keep carousel open** switches to press-once operation. It is off by
+default. When enabled, release the shortcut and browse with arrows, Tab or
+subsequent shortcut presses. Enter or a click applies the selected wallpaper;
+Esc or an outside click cancels. Grid Up/Down moves by a row. Shift+Tab moves
+backward when that combination is not itself captured by a global binding.
+The persistent popup stays open until you apply or cancel, without an idle
+timeout. Toggling this preference does not change or enable your global shortcut;
+it takes effect the next time the carousel opens. The app respects shortcut
 inhibitors. On other compositors, a manually configured `wallpaper-lab --next`
 binding provides direct switching; popup integration needs separate verification.
 

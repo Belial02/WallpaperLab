@@ -34,6 +34,7 @@ int main(){
             auto loaded=loadSettings();require(labThemes[loaded["switcher_palette"].get<int>()].collection==0,"themed switcher palette survived migration");
         }
         fs::remove(configDir()/"settings.json");require(loadSettings()["ui_design"]==0&&loadSettings()["ui_theme"]==14,"new install must use Default");
+        require(loadSettings()["carousel_persistent"]==false,"persistent carousel must be opt-in");
         for(int old=0;old<32;old++){
             writeJson(configDir()/"settings.json",{{"theme_ui_v2",true},{"ui_theme",old},{"light_theme",true},{"ui_design",old<29?0:1},{"font_family","Noto Sans"}});
             auto loaded=loadSettings();require(loaded["ui_design"]==1&&loaded["ui_theme"]==(old>=29?old-29:0),"legacy palette migration failed");

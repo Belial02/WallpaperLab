@@ -642,7 +642,7 @@ int lab_set_option(const char* key,int value){
     if(k=="transition_type")return savePreference(k,std::clamp(value,0,8));
     const std::map<std::string,std::pair<int,int>> backendRanges={{"wallpaper_backend",{0,1}},{"awww_transition",{0,13}},{"awww_step",{1,255}},{"awww_duration",{100,10000}},{"awww_fps",{1,240}},{"awww_position",{0,9}},{"awww_angle",{0,360}}};
     if(auto range=backendRanges.find(k);range!=backendRanges.end())return savePreference(k,std::clamp(value,range->second.first,range->second.second));
-    if(k=="awww_invert_y"||k=="wallpaper_post_hook_enabled")return savePreference(k,bool(value));
+    if(k=="awww_invert_y"||k=="wallpaper_post_hook_enabled"||k=="carousel_persistent")return savePreference(k,bool(value));
     if(k=="fullscreen_policy")return savePreference(k,std::clamp(value,0,2));
     if(k=="filter_width")return savePreference(k,std::clamp(value,220,600));
     if(k=="filter_any"||k=="reduce_motion"||k=="workshop_mature")return savePreference(k,(bool)value);
@@ -701,7 +701,7 @@ int lab_popup_poll(int* steps,int* released){
         auto state=popupState();
         if(state.empty()||state.value("done",false))return -1;
         bool reset=state.value("epoch",std::string())!=popupSnapshot.value("epoch",std::string())||state.value("session",0LL)!=popupSnapshot.value("session",0LL);
-        popupSnapshot=state;*steps=state.value("steps",0);*released=state.value("commit",false);return reset?1:0;
+        popupSnapshot=state;*steps=state.value("steps",0);*released=state.value("commit",false)&&!settings.value("carousel_persistent",false);return reset?1:0;
     }catch(const std::exception& e){errorMessage=e.what();return -1;}
 }
 int lab_popup_selection(int count,int current,int steps){return popupSelection(count,current,steps);}

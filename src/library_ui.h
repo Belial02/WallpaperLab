@@ -308,6 +308,8 @@ static void SettingsBody(Rectangle area){
         }
         UiText(lab_tr("Shortcut del carousel"),x,y,18,AppTheme.text);y+=30;ShortcutInline(x,y,w);y+=50;
         int current=lab_shortcut_enabled();int value=BoolChoice(21,x,&y,w,lab_tr("Shortcut attivo"),current);if(value!=current)lab_set_shortcut(lab_shortcut(),value);
+        current=lab_option("carousel_persistent");value=BoolChoice(86,x,&y,w,lab_tr("Mantieni aperto il carousel"),current);if(value!=current)lab_set_option("carousel_persistent",value);
+        y+=TextLines(lab_tr("Frecce / Tab · Invio per applicare · Esc per annullare"),x,y+8,w,12,3,muted)+16;
     }else if(settingsTab==3){
         int design=lab_option("ui_design");int value=Choice(38,x,&y,w,lab_tr("Temi"),labDesignNames,LAB_DESIGN_COUNT,design);if(value!=design)lab_set_option("ui_design",value);
         AppearanceFonts(x,&y,w);

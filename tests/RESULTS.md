@@ -6,6 +6,28 @@ results and limitations while omitting workstation session notes and local
 wallpaper choices. Logs, screenshots, generated fixtures and library assets stay
 outside Git under `local/` or isolated XDG directories.
 
+## Optional persistent carousel — 2026-11-11
+
+- Added **Keep carousel open** beside the carousel shortcut settings. It defaults
+  to off and persists independently of shortcut activation or the generated bind.
+- Persistent mode ignores modifier-release confirmation, keeps subsequent
+  shortcut taps in the same window, and closes on Enter/click confirmation or
+  Esc/outside-click cancellation. It has no idle timeout. Both modes support
+  arrows and Tab; keyboard rotation preserves the temporary nonfavorite anchor.
+- All **16 CTest checks passed**, including catalog/lifecycle, backward wrap,
+  grid-row navigation, transient-anchor exclusion and opt-in preference defaults.
+- Explicit Hyprland desktop checks passed for all four carousel layouts using
+  real virtual-keyboard input and isolated XDG state with a fake awww daemon:
+  early shortcut release kept the persistent popup open, another shortcut tap
+  advanced the same window, late old releases were ignored, arrows and Tab
+  navigated, Enter applied and Esc cancelled. Hold-mode release still confirmed.
+  The personal wallpaper and application state were unchanged by these checks.
+- The GUI toggle round trip saved both on/off values without creating or changing
+  shortcut configuration. Its placement was visually inspected. All 441 messages
+  passed glyph checks across 22 languages. Installed the updated runtime with
+  backups, retained the existing shortcut and wallpaper, and verified the new
+  setting remains off by default.
+
 ## awww timing sliders and CLI palette parity — 2026-11-11
 
 - Added Step and Duration sliders directly under the awww transition selector in

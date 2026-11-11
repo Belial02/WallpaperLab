@@ -7,6 +7,7 @@
   "Azione popup non valida": "Valore non valido.",
   "Base della disposizione non valida": "Configurazione dei monitor non valida.",
   "Cache non scrivibile": "Impossibile accedere al file.",
+  "Caelestia CLI wallpaper integration failed; see integrations/caelestia-cli.log": "Preparazione Caelestia non riuscita.",
   "Caelestia wallpaper hook must begin with awww img and WALLPAPER_PATH": "Operazione non riuscita. Dettagli nel registro.",
   "Cannot lock selector": "Impostazioni non valide.",
   "Cannot open selector lock": "Impostazioni non valide.",

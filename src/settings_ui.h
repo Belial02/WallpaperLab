@@ -92,4 +92,4 @@ static bool NumberSlider(int id,int x,int* y,int w,const char* label,float* valu
  bool commit=false;if(uiSliderDrag==id){*value=lo+Clamp((GetMouseX()-track.x)/track.width,0,1)*(hi-lo);if(!IsMouseButtonDown(MOUSE_BUTTON_LEFT)){uiSliderDrag=-1;commit=true;}}
  ThemePanel(track,1,8,controlHover);DrawRectangle(track.x,track.y,track.width*(*value-lo)/(hi-lo),4,AppTheme.border);DrawCircleV((Vector2){track.x+track.width*(*value-lo)/(hi-lo),track.y+2},5,AppTheme.text);*y+=48;return commit;
 }
-static void SettingSlider(int id,int x,int* y,int w,const char* label,const char* key,int lo,int hi,const char* suffix){static float drafts[32];int at=id-100;if(uiSliderDrag!=id)drafts[at]=lab_option(key);if(NumberSlider(id,x,y,w,label,&drafts[at],lo,hi,suffix))lab_set_option(key,lroundf(drafts[at]));}
+static void SettingSlider(int id,int x,int* y,int w,const char* label,const char* key,int lo,int hi,const char* suffix){static float drafts[32];int at=id-100;if(uiSliderDrag!=id)drafts[at]=lab_option(key);if(NumberSlider(id,x,y,w,label,&drafts[at],lo,hi,suffix))lab_set_option(key,!strcmp(key,"awww_duration")?100*lroundf(drafts[at]/100):lroundf(drafts[at]));}

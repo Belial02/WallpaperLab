@@ -302,6 +302,10 @@ static void SettingsBody(Rectangle area){
         y+=TextLines(lab_tr("Audio aggiornato subito · altre opzioni al prossimo Applica"),x,y+8,w,14,3,muted)+20;
     }else if(settingsTab==2){
         TransitionControls(x,&y,w);y+=20;
+        if(lab_option("wallpaper_backend")==1){
+            SettingSlider(129,x,&y,w,lab_tr("Passo della transizione"),"awww_step",1,255,"");
+            SettingSlider(130,x,&y,w,lab_tr("Durata della transizione"),"awww_duration",100,10000," ms");y+=12;
+        }
         UiText(lab_tr("Shortcut del carousel"),x,y,18,AppTheme.text);y+=30;ShortcutInline(x,y,w);y+=50;
         int current=lab_shortcut_enabled();int value=BoolChoice(21,x,&y,w,lab_tr("Shortcut attivo"),current);if(value!=current)lab_set_shortcut(lab_shortcut(),value);
     }else if(settingsTab==3){
@@ -346,10 +350,14 @@ static void SettingsBody(Rectangle area){
         int current=lab_option("caelestia_enabled"),value=BoolChoice(73,x,&y,w,lab_tr("Colori dal wallpaper"),current);if(current!=value)lab_set_option("caelestia_enabled",value);
         if(lab_monitor_count()){const char* outputs[32];int count=lab_monitor_count()<32?lab_monitor_count():32;for(int i=0;i<count;i++)outputs[i]=lab_monitor(i);int screen=lab_caelestia_screen(),chosen=Choice(80,x,&y,w,lab_tr("Monitor per i colori"),outputs,count,screen);if(chosen!=screen)lab_caelestia_set_screen(chosen);}
         y+=TextLines(lab_tr("Caelestia usa una palette globale. Scegli il monitor da cui ricavare i colori."),x,y,w,13,4,muted)+12;
+        if(lab_option("wallpaper_backend")==1){
+            y+=TextLines(lab_tr("Le immagini awww usano lo schema e la selezione automatica di Caelestia CLI."),x,y,w,13,4,muted)+18;
+        }else{
         const char* palettes[]={lab_tr("Vivace"),lab_tr("Toni morbidi"),lab_tr("Espressiva"),lab_tr("Fedele al wallpaper")};int palette=lab_option("caelestia_palette"),next=Choice(78,x,&y,w,lab_tr("Palette dinamica"),palettes,4,palette);if(next!=palette)lab_set_option("caelestia_palette",next);
         const char* modes[]={lab_tr("Automatica"),lab_tr("Scura"),lab_tr("Chiara")};int mode=lab_option("caelestia_mode");next=Choice(79,x,&y,w,lab_tr("Luminosità della palette"),modes,3,mode);if(next!=mode)lab_set_option("caelestia_mode",next);
         y+=TextLines(lab_tr("L’attivazione prepara solo i componenti colore opzionali. La shell Caelestia resta separata."),x,y,w,12,4,muted)+14;
         y+=TextLines(lab_tr("Aggiorna barre e widget di Caelestia dai colori dell’anteprima. Non cambia le altre applicazioni."),x,y,w,13,4,muted)+18;
+        }
         y+=TextLines(lab_caelestia_available()?lab_caelestia_status():lab_tr("Caelestia non rilevato"),x,y,w,12,4,muted)+14;
     }else{
         UiText("Steam Workshop",x,y,22,AppTheme.text);y+=40;

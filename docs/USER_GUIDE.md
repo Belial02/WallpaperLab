@@ -25,13 +25,23 @@ It runs after a successful awww application with `WALLPAPER_PATH` set to the
 actual imported media file. This can retain an existing cursor-theme rebuild.
 Output and failures are recorded in the app's XDG state directory as
 `post-hook.log` and `post-hook-status.json`. A failed post-hook keeps the wallpaper
-active and displays a notice in Playback settings. This does not invoke the full
-Caelestia wallpaper command; the app's existing optional palette integration
-remains separate.
+active and displays a notice in Playback settings.
 
-Under **Carousel → Transition**, select any awww effect, then use the customize
-button for duration (milliseconds), step, FPS, origin and Y inversion. Wipe/wave
-also expose the angle. These preferences are separate from native transitions
+When **Colors from wallpaper** is enabled, awww images use the installed
+Caelestia CLI wallpaper pipeline on the actual media file. Scheme flavour, smart
+mode/variant selection, quantization, thumbnail cache and theme application follow
+`caelestia wallpaper -f`, as with Hellpaper. The CLI wallpaper hook is suppressed
+only in the adapter process: Wallpaper Lab already runs awww with your GUI
+settings and executes the imported trailing hook separately. Your `cli.json`
+stays unchanged. CLI theme hooks still run normally. There is no additional
+Wallpaper Lab tint or forced fidelity preset for these images.
+
+Under **Settings → Carousel → Transition**, select any awww effect. **Transition
+step** and **Transition duration** sliders appear directly below the style
+selector. Duration uses 0.1-second increments, is displayed in milliseconds, and
+is passed to awww in seconds.
+The customize button also exposes duration, step, FPS, origin and Y inversion.
+Wipe/wave also expose the angle. These preferences are separate from native transitions
 and from the switcher's own animation. Native shader previews are disabled for
 awww; apply an image to see the actual effect. Reduced motion selects `none`.
 

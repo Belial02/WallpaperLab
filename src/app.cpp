@@ -87,6 +87,18 @@ void syncCaelestia(const Item& item,const json& prefs,bool alreadyLocked=false){
  if(!prefs.value("caelestia_enabled",false)||item.path.empty())return;
  auto sourcePrefs=paletteSelection(prefs);auto source=selectedRunning(sourcePrefs);
  if(!owned(source)||source.value("path",std::string())!=item.path)return;
+ if(usesAwww(item,prefs)){
+  try{
+   std::unique_ptr<ControllerLock> publicationLock;
+   bool published=updateCaelestiaCli(awwwImage(item),[&]{
+    if(!alreadyLocked)publicationLock=std::make_unique<ControllerLock>();
+    auto latest=loadSettings();auto active=selectedRunning(paletteSelection(latest));
+    return latest.value("caelestia_enabled",false)&&usesAwww(item,latest)&&latest.value("caelestia_output",std::string())==prefs.value("caelestia_output",std::string())&&owned(active)&&active.value("path",std::string())==item.path;
+   });
+   if(published){std::lock_guard statusLock(integrationStatusMutex);writeJson(stateDir()/"integration-status.json",{{"ok",true}});}
+  }catch(const std::exception& e){std::lock_guard statusLock(integrationStatusMutex);writeJson(stateDir()/"integration-status.json",{{"ok",false},{"error",e.what()}});}
+  return;
+ }
  fs::path capturedArtwork;
  try{
   // Prefer the actual rendered frame, including crop and image adjustments.
@@ -641,7 +653,7 @@ int lab_set_option(const char* key,int value){
     if(k=="muted"||k=="disable_audio_processing"||k=="disable_mouse"||k=="disable_parallax"||k=="disable_particles")return savePreference(k,(bool)value);
     return 0;
 }
-void startIntegrationJob(){integrationDirty=false;refreshRunning();auto item=paletteItem(settings);auto prefs=settings;integrationJob=std::async(std::launch::async,[item,prefs]{try{prepareCaelestia();if(!item.path.empty())syncCaelestia(item,prefs);else{std::lock_guard lock(integrationStatusMutex);writeJson(stateDir()/"integration-status.json",{{"ok",true}});}}catch(const std::exception& e){std::lock_guard lock(integrationStatusMutex);writeJson(stateDir()/"integration-status.json",{{"ok",false},{"error",e.what()}});}});}
+void startIntegrationJob(){integrationDirty=false;refreshRunning();auto item=paletteItem(settings);auto prefs=settings;integrationJob=std::async(std::launch::async,[item,prefs]{try{if(!usesAwww(item,prefs))prepareCaelestia();if(!item.path.empty())syncCaelestia(item,prefs);else{std::lock_guard lock(integrationStatusMutex);writeJson(stateDir()/"integration-status.json",{{"ok",true}});}}catch(const std::exception& e){std::lock_guard lock(integrationStatusMutex);writeJson(stateDir()/"integration-status.json",{{"ok",false},{"error",e.what()}});}});}
 const char* lab_shortcut(){shortcutLabel=shortcut.value("combo",std::string("SUPER+Tab"));return shortcutLabel.c_str();}
 int lab_shortcut_enabled(){return shortcut.value("enabled",false);}
 int lab_record_shortcut(int enabled){

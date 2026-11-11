@@ -6,6 +6,32 @@ results and limitations while omitting workstation session notes and local
 wallpaper choices. Logs, screenshots, generated fixtures and library assets stay
 outside Git under `local/` or isolated XDG directories.
 
+## awww timing sliders and CLI palette parity — 2026-11-11
+
+- Added Step and Duration sliders directly under the awww transition selector in
+  Carousel settings. Values persist to the existing awww preferences and are
+  passed as step and seconds; the customize dialog remains available.
+- The local-image colour path now calls the installed Caelestia CLI on the media
+  file, preserving its smart mode/variant, flavour, thumbnail/quantization cache
+  and theme application. The CLI wallpaper hook is suppressed in memory so it
+  cannot override GUI transition values or duplicate the imported trailing hook.
+  CLI theme hooks remain enabled; no user CLI configuration is rewritten.
+- Real CLI adapter tests passed in isolated XDG directories: generated colours
+  and metadata matched `caelestia wallpaper -f` exactly for default and hard
+  flavours. Theme hooks ran, wallpaper hooks were suppressed only by the adapter,
+  wallpaper links updated, and CLI configuration stayed byte-identical.
+- Controller lifecycle coverage checks that the CLI adapter receives the actual
+  media file and publishes its returned variant instead of generating a preview
+  tint. Native scene/video palette generation remains unchanged.
+- All **16 CTest checks passed**. Hyprland virtual-pointer checks changed both
+  inline sliders and verified persisted values; duration snaps to 100-ms steps.
+  The inline controls were visually inspected. Pango checked 439 messages across
+  all 22 languages without missing glyphs.
+- Installed the updated runtime and reapplied the active image: the complete
+  resulting scheme matched the CLI's expected colours and metadata exactly.
+  Theme/cursor hooks completed, CLI configuration stayed byte-identical, and the
+  previous runtime, preferences and scheme were backed up before handoff.
+
 ## Custom awww backend — 2026-11-11
 
 - App rebuilt against the pinned source headers and the installed 1.0 engine/CEF

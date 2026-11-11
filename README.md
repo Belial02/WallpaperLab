@@ -45,6 +45,9 @@ The source tree also supports **awww for local images and animated GIFs**. Choos
 it under **Settings → Playback**, or import a supported `awww` wallpaper hook
 from Caelestia CLI. Transition controls then use awww's effects, duration, step,
 FPS, origin and Y inversion. Videos and Workshop projects keep the native renderer.
+Step and duration sliders appear directly below the transition selector. Optional
+colours for awww images follow the installed Caelestia CLI's scheme and smart
+selection, including its theme hooks.
 This addition is a source/custom-build feature; the linked 1.0 installer predates it.
 
 [Installation, updating, removal and troubleshooting →](docs/BETA.md)

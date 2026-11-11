@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import signal
 import subprocess
+import sys
 import tempfile
 import time
 
@@ -18,7 +19,7 @@ with tempfile.TemporaryDirectory(prefix='wallpaper-lab-awww-') as tmp:
     env = os.environ.copy()
     env.update(XDG_CONFIG_HOME=str(root/'config'), XDG_STATE_HOME=str(root/'state'),
                XDG_DATA_HOME=str(root/'data'), WALLPAPER_LAB_LIBRARY=str(root/'library'),
-               AWWW_TEST_ROOT=tmp, PATH=str(root/'bin')+':'+env['PATH'])
+               AWWW_TEST_ROOT=tmp, AWWW_TEST_PYTHON=sys.executable, PATH=str(root/'bin')+':'+env['PATH'])
     (root/'bin').mkdir()
     (root/'bin/awww').write_text('''#!/usr/bin/env python3
 import json,os,sys
@@ -41,11 +42,20 @@ if sys.argv[1]=='cursorpos':print('{"x":123,"y":456}')
 elif sys.argv[1]=='monitors':print(json.dumps([{'name':'DP-1','description':'Test monitor','width':1920,'height':1080,'scale':1,'x':0,'y':0,'focused':True}]))
 else:print('ok')
 ''')
+    (root/'bin/python3').write_text('''#!/usr/bin/python3
+import json,os,sys
+from pathlib import Path
+if len(sys.argv)>2 and Path(sys.argv[1]).name=='caelestia_cli.py':
+ r=Path(os.environ['AWWW_TEST_ROOT']);(r/'palette-source.txt').write_text(sys.argv[2])
+ palette={'name':'dynamic','flavour':'hard','mode':'dark','variant':'tonalspot','colours':{'primary':'123456','surface':'112233'}}
+ target=Path(os.environ['XDG_STATE_HOME'])/'caelestia/scheme.json';target.parent.mkdir(parents=True,exist_ok=True);target.write_text(json.dumps(palette));print(json.dumps(palette))
+else:os.execv(os.environ['AWWW_TEST_PYTHON'],[os.environ['AWWW_TEST_PYTHON']]+sys.argv[1:])
+''')
     for file in (root/'bin').iterdir():file.chmod(0o755)
     config = root/'config/wallpaper-lab'
     config.mkdir(parents=True)
     prefs = {'mode':'single','screen':0,'wallpaper_backend':1,'awww_position':0,
-             'caelestia_enabled':False,'transition_type':7}
+             'caelestia_enabled':True,'transition_type':7}
     def save(): (config/'settings.json').write_text(json.dumps(prefs))
     def run(*args, ok=True):
         result=subprocess.run([app,*map(str,args)],env=env,capture_output=True,text=True,timeout=45)
@@ -72,6 +82,8 @@ else:print('ok')
         run('--apply','image0');first=status();assert first['alive'] and first['backend']=='awww'
         args=json.loads((root/'args.json').read_text())
         assert args[args.index('--transition-pos')+1]=='123,456' and '--invert-y' in args
+        assert (root/'palette-source.txt').read_text()==str(root/'library/image0/media.png')
+        assert json.loads((root/'state/caelestia/scheme.json').read_text())['variant']=='tonalspot'
         assert (root/'state/wallpaper-lab/post-hook.log').read_text()==str(root/'library/image0/media.png')
         run('--favorite','image0');run('--favorite','image1');run('--next')
         second=status();assert second['alive'] and second['path'].endswith('/image1')

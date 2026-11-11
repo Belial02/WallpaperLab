@@ -14,6 +14,13 @@ its optional trailing shell hook separately. Only that explicitly imported hook
 runs through a shell, with the media path passed as a positional argument. Native
 previews, videos and Workshop projects retain the embedded engine path.
 
+For awww images, optional colour integration invokes `caelestia_cli.py` using
+the installed CLI's `set_wallpaper` implementation and the full media file. Its
+in-process wallpaper config omits `postHook`, preserving GUI transition arguments;
+theme config and theme hooks remain unchanged. This keeps smart mode/variant,
+flavour, quantization, caching and full theme application identical to the CLI.
+The previous custom palette generator remains for native scene/video artwork.
+
 Wallpaper Lab builds one application executable with a raylib UI and a C++
 controller exposed through a C API. Its `--render` mode links the native engine
 library directly. Rendering runs in a separate instance of the same executable,
